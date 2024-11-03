@@ -21,7 +21,7 @@ end
 
 function base:moveToGroup(newGroup)
     local group = self.group
-    for i = 1, #group.obj, 1 do
+    for i = #group.obj, 1, -1 do
         if group.obj[i] == self then
             table.remove(group.obj, i)
             break
@@ -32,13 +32,85 @@ end
 
 function base:remove()
     local group = self.group
-    for i = 1, #group.obj, 1 do
+    base:removeFocus()
+    if #self.events.touch >= 1 then
+        for i = #mane.core.click.running, 1, -1 do
+            if mane.core.click.running[i] == self then
+                table.remove(mane.core.click.running, i)
+                break
+            end
+        end
+    end
+    for i = #group.obj, 1, -1 do
         if group.obj[i] == self then
             table.remove(group.obj, i)
             break
         end
     end
 end
+
+function base:addCollision(world, listener)
+    table.insert(self.events.collision, listener)
+    table.insert(world.events.collision, self)
+end
+function base:removeCollision(listener)
+    for i = #self.events.collision, 1, -1 do
+        if self.events.collision[i] == listener then
+            table.remove(self.events.collision, i)
+            break
+        end
+    end
+end
+function base:addEndCollision(world, listener)
+    table.insert(self.events.endCollision, listener)
+    table.insert(world.events.endCollision, self)
+end
+function base:removeEndCollision(listener)
+    for i = #self.events.endCollision, 1, -1 do
+        if self.events.endCollision[i] == listener then
+            table.remove(self.events.endCollision, i)
+            break
+        end
+    end
+end
+function base:addPreCollision(world, listener)
+    table.insert(self.events.preCollision, listener)
+    table.insert(world.events.preCollision, self)
+end
+function base:removePreCollision(listener)
+    for i = #self.events.preCollision, 1, -1 do
+        if self.events.preCollision[i] == listener then
+            table.remove(self.events.preCollision, i)
+            break
+        end
+    end
+end
+function base:addPostCollision(world, listener)
+    table.insert(self.events.postCollision, listener)
+    table.insert(world.events.postCollision, self)
+end
+function base:removePostCollision(listener)
+    for i = #self.events.postCollision, 1, -1 do
+        if self.events.postCollision[i] == listener then
+            table.remove(self.events.postCollision, i)
+            break
+        end
+    end
+end
+function base:addClick(listener)
+    mane.core.click.new(self, listener)
+end
+-- function base:addFocus()
+--     table.insert(mane.core.click.focus, self)
+-- end
+-- function base:removeFocus()
+--     for i = 1, #mane.core.click.focus, 1 do
+--         if mane.core.click.focus[i][1] == self then
+--             table.remove(mane.core.click.focus, i)
+--             break
+--         end
+--     end
+-- end
 
 function m:newPrintf(text, font, x, y, limit, align, fontSize)
     if type(font) == "number" then
@@ -69,7 +141,13 @@ function m:newPrintf(text, font, x, y, limit, align, fontSize)
         yScale = 1,
         isVisible = true,
         group = self,
-        events = {}
+        events = {
+            collision = {},
+            endCollision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {}
+        }
     },{__index = base})
     table.insert(self.obj, obj)
     return obj
@@ -102,7 +180,13 @@ function m:newPrint(text, font, x, y, fontSize)
         yScale = 1,
         isVisible = true,
         group = self,
-        events = {}
+        events = {
+            collision = {},
+            endCollision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {}
+        }
     },{__index = base})
     table.insert(self.obj, obj)
     return obj
@@ -119,7 +203,13 @@ function m:newPolygon(vertices)
         yScale = 1,
         isVisible = true,
         group = self,
-        events = {}
+        events = {
+            collision = {},
+            endCollision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {}
+        }
     },{__index = base})
     table.insert(self.obj, obj)
     return obj
@@ -136,13 +226,19 @@ function m:newPoints(points)
         yScale = 1,
         isVisible = true,
         group = self,
-        events = {}
+        events = {
+            collision = {},
+            endCollision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {}
+        }
     },{__index = base})
     table.insert(self.obj, obj)
     return obj
 end
 
-function m:newLine(points)
+function m:newLine(points, x, y)
     local obj = setmetatable({
         points = points,
         _type = "newLine",
@@ -150,12 +246,20 @@ function m:newLine(points)
         angle = 0,
         xScale = 1,
         yScale = 1,
+        x = x or 0,
+        y = y or 0,
         isVisible = true,
         group = self,
         width = 3,
         style = "smooth",
         join = "none",
-        events = {}
+        events = {
+            collision = {},
+            endCollision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {}
+        }
     },{__index = base})
     table.insert(self.obj, obj)
     return obj
@@ -176,7 +280,13 @@ function m:newEllipse(x, y, radiusx, radiusy, segments)
         segments = segments or 100,
         isVisible = true,
         group = self,
-        events = {}
+        events = {
+            collision = {},
+            endCollision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {}
+        }
     },{__index = base})
     table.insert(self.obj, obj)
     return obj
@@ -198,7 +308,13 @@ function m:newLayerImage(imageArray, layerindex, x, y, xScale, yScale, ox, oy)
         angle = 0,
         isVisible = true,
         group = self,
-        events = {}
+        events = {
+            collision = {},
+            endCollision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {}
+        }
     },{__index = base})
     table.insert(self.obj, obj)
     return obj
@@ -222,7 +338,13 @@ function m:newImage(image, x, y, xScale, yScale, ox, oy)
         yScale = yScale or 1,
         isVisible = true,
         group = self,
-        events = {}
+        events = {
+            collision = {},
+            endCollision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {}
+        }
     },{__index = base})
     table.insert(self.obj, obj)
     return obj
@@ -249,7 +371,13 @@ function m:newArc(arctype, x, y, radius, angle1, angle2, segments)
         segments = segments or 12,
         isVisible = true,
         group = self,
-        events = {}
+        events = {
+            collision = {},
+            endCollision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {}
+        }
     },{__index = base})
     table.insert(self.obj, obj)
     return obj
@@ -269,7 +397,13 @@ function m:newCircle(x, y, radius)
         segments = 100,
         isVisible = true,
         group = self,
-        events = {}
+        events = {
+            collision = {},
+            endCollision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {}
+        }
     },{__index = base})
     table.insert(self.obj, obj)
     return obj
@@ -292,7 +426,13 @@ function m:newRect(x, y, width, height, rx, ry, segments)
         yScale = 1,
         isVisible = true,
         group = self,
-        events = {}
+        events = {
+            collision = {},
+            endCollision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {}
+        }
     },{__index = base})
     table.insert(self.obj, obj)
     return obj
