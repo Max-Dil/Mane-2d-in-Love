@@ -14,5 +14,7 @@ m.setShear = function (kx, ky)
     love.graphics.shear( kx, ky )
 end
 
+m.renderMode = "normal"
+
 mane.display = m
 require("mane.src.core.group")

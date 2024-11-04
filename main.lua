@@ -32,22 +32,26 @@ function mane.load()
     end)
 
 
-    local collision = function (ob1, ob2)
-        print(ob1.name)
-        print(ob2.name)
-    end
-    rect:addCollision(worldGame, collision)
+    -- local collision = function (ob1, ob2)
+    --     print(ob1.name)
+    --     print(ob2.name)
+    -- end
+    -- rect:addCollision(worldGame, collision)
 
-    local line = group:newLine({100, 100, 200, 200})
-    line:addClick(function (e)
+    local text = group:newPrint("Hello World!", 300, 300)
+    worldGame:addBody(text, "static", {shape = "edge", x1 = 0, y1 = 0, x2 = 100, y2 = 100})
+    text:addClick(function (e)
         if e.phase == "began" then
         elseif e.phase == "moved" then
-            line.x, line.y = e.x, e.y
+            text.x, text.y = e.x, e.y
+        elseif e.phase == "ended" or e.phase == "cancelled" then
         end
         return true
     end)
-    line.x = centerX
-    line.width = 10
+    function mane.physics.globalCollision(a, b)
+        print(a.name)
+    end
+    mane.display.renderMode = "hybrid"
     function love.keypressed(key)
         if key == "a" then
             worldGame.update = true

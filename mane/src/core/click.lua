@@ -44,6 +44,7 @@ end
 local function isPointOnLine(x, y, obj)
     for i = 1, #obj.points - 2, 2 do
         local width, height = mane.graphics.getLineWidthHeight(obj.points)
+        width, height = width*1.5, height*1.5
         local ox = obj.x - width
         local oy = obj.y - height
         local x1 = ox + obj.points[i]
@@ -132,15 +133,44 @@ function m.mousepressed(x, y, button, isTouch)
                     break
                 end
             end
-        elseif obj._type == "newPoints" then
+        elseif obj._type == "newPoint" then
             for j = 1, #obj.points, 2 do
-                local pointX = obj.points[j]
-                local pointY = obj.points[j + 1]
+                local width, height = mane.graphics.getPointsDimensions(obj.points)
+                width, height = width*1.5, height*1.5
+                local pointX = (obj.x - width) + obj.points[j]
+                local pointY = (obj.y - height) + obj.points[j + 1]
                 if love.distance(x, y, pointX, pointY) <= obj.size / 2 then
                     local result = call_func(obj)
                     if result then
                         return true
                     end
+                    break
+                end
+            end
+        elseif obj._type == "newPolygon" then
+            if mane.graphics.pointInPolygon(obj.vertices, x, y, obj) then
+                local result = call_func(obj)
+                if result then
+                    break
+                end
+            end
+        elseif obj._type == "newPrint" or obj._type == "newPrintf" then
+            local currentY = obj.y
+            local text = obj.text
+            if type(obj.text) == "table" then
+                text = ""
+                for _, line in ipairs(obj.text) do
+                    text = text .. line.text
+                end
+            end
+            local textWidth, textHeight = obj.font:getWidth(text), obj.font:getHeight(text)
+            local x1 = obj.x - textWidth / 2
+            local y1 = obj.y - textHeight / 2
+            local x2 = obj.x + textWidth / 2
+            local y2 = obj.y + textHeight / 2
+            if x >= x1 and x <= x2 and y >= y1 and y <= y2 then
+                local result = call_func(obj)
+                if result then
                     break
                 end
             end

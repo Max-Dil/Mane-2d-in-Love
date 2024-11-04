@@ -3,53 +3,33 @@ local m = {}
 m.newPrintf = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
-    if obj.font then
-        if type(obj.text) == "table" then
-            love.graphics.printf(obj.text, obj.font, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle), obj.xScale, obj.yScale)
-        else
-            local textWidth = obj.font:getWidth(obj.text)
-            local textHeight = obj.font:getHeight(obj.text)
-            love.graphics.printf(obj.text, obj.font, obj.x, obj.y, obj.limit, obj.align,  math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
-        end
+    if type(obj.text) == "table" then
+        love.graphics.printf(obj.text, obj.font, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle), obj.xScale, obj.yScale)
     else
-        if type(obj.text) == "table" then
-            love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align,  math.rad(obj.angle), obj.xScale, obj.yScale)
-        else
-            local font = love.graphics.getFont()
-            local textWidth = font:getWidth(obj.text)
-            local textHeight = font:getHeight(obj.text)
-            love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align,  math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
-        end
+        local textWidth = obj.font:getWidth(obj.text)
+        local textHeight = obj.font:getHeight(obj.text)
+        love.graphics.printf(obj.text, obj.font, obj.x, obj.y, obj.limit, obj.align,  math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
     end
 end
 
 m.newPrint = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
-    if obj.font then
-        if type(obj.text) == "table" then
-            love.graphics.print(obj.text, obj.font, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale)
-        else
-            local textWidth = obj.font:getWidth(obj.text)
-            local textHeight = obj.font:getHeight(obj.text)
-            love.graphics.print(obj.text, obj.font, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
-        end
+    if type(obj.text) == "table" then
+        love.graphics.print(obj.text, obj.font, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale)
     else
-        if type(obj.text) == "table" then
-            love.graphics.print(obj.text, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale)
-        else
-            local font = love.graphics.getFont()
-            local textWidth = font:getWidth(obj.text)
-            local textHeight = font:getHeight(obj.text)
-            love.graphics.print(obj.text, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
-        end
+        local textWidth = obj.font:getWidth(obj.text)
+        local textHeight = obj.font:getHeight(obj.text)
+        love.graphics.print(obj.text, obj.font, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
     end
 end
 
 m.newPolygon = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
-    love.graphics.translate(obj.x, obj.y)
+    local width, height = mane.graphics.getPolygonDimensions(obj.vertices)
+    width, height = width*1.5, height*1.5
+    love.graphics.translate(obj.x - width, obj.y - height)
     love.graphics.rotate(math.rad(obj.angle))
     love.graphics.scale(obj.xScale, obj.yScale)
     love.graphics.polygon(obj.mode, obj.vertices)
@@ -58,7 +38,9 @@ end
 m.newPoint = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
-    love.graphics.translate(obj.x, obj.y)
+    local width, height = mane.graphics.getPointsDimensions(obj.points)
+    width, height = width*1.5, height*1.5
+    love.graphics.translate(obj.x - width, obj.y - height)
     love.graphics.rotate(math.rad(obj.angle))
     love.graphics.scale(obj.xScale, obj.yScale)
     love.graphics.setPointSize(obj.size)
@@ -69,6 +51,7 @@ m.newLine = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
     local width, height = mane.graphics.getLineWidthHeight(obj.points)
+    width, height = width*1.5, height*1.5
     love.graphics.translate(obj.x - width, obj.y - height)
     love.graphics.rotate(math.rad(obj.angle))
     love.graphics.scale(obj.xScale, obj.yScale)
@@ -141,10 +124,41 @@ m.newGroup = function(group)
     love.graphics.rotate(math.rad(group.angle))
     love.graphics.scale(group.xScale, group.yScale)
     for i = 1, #group.obj, 1 do
-        if group.obj[i].isVisible then
+        local obj = group.obj[i]
+        if obj.isVisible then
             love.graphics.push()
-            m[group.obj[i]._type](group.obj[i])
+            m[obj._type](obj)
             love.graphics.pop()
+            if mane.display.renderMode == "hybrid" and obj.body and obj.shape then
+                local x, y = obj.body:getPosition()
+                local angle = obj.body:getAngle()
+
+                love.graphics.push()
+                love.graphics.translate(x, y)
+                love.graphics.rotate(angle)
+
+                if obj.body:getType() == "static" then
+                    love.graphics.setColor(1,0,0,1)
+                else
+                    love.graphics.setColor(0,1,0,1)
+                end
+                if obj.bodyOptions.shape == "rect" then
+                    love.graphics.rectangle("line", 0 - obj.bodyOptions.width/2, 0 - obj.bodyOptions.height/2, obj.bodyOptions.width, obj.bodyOptions.height)
+                elseif obj.bodyOptions.shape == "circle" then
+                    love.graphics.circle('line', 0, 0, obj.bodyOptions.radius)
+                elseif obj.bodyOptions.shape == "chain" then
+                    local points = obj.bodyOptions.points
+                    love.graphics.line(points)
+                elseif obj.bodyOptions.shape == "edge" then
+                    local x1, y1 = obj.bodyOptions.x1, obj.bodyOptions.y1
+                    local x2, y2 = obj.bodyOptions.x2, obj.bodyOptions.y2
+                    love.graphics.line(x1, y1, x2, y2)
+                elseif obj.bodyOptions.shape == "polygon" then
+                    local points = obj.bodyOptions.vertices
+                    love.graphics.polygon("line", points)
+                end
+                love.graphics.pop()
+            end
         end
     end
     love.graphics.pop()

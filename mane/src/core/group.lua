@@ -126,7 +126,7 @@ function m:newPrintf(text, font, x, y, limit, align, fontSize)
         y = y,
         limit = limit or 200,
         align = align or "left",
-        font = type(font) == "string" and mane.fonts[font] or nil,
+        font = type(font) == "string" and mane.fonts[font] or love.graphics.getFont(),
         fontSize = fontSize or 20,
         setFontSize = function (fontSize)
             mane.fonts[self.font] = love.graphics.setNewFont(mane.fonts[self.font], self.fontSize or 20)
@@ -165,7 +165,7 @@ function m:newPrint(text, font, x, y, fontSize)
         text = text,
         x = x,
         y = y,
-        font = type(font) == "string" and mane.fonts[font] or nil,
+        font = type(font) == "string" and mane.fonts[font] or love.graphics.getFont(),
         fontSize = fontSize or 20,
         setFontSize = function (fontSize)
             mane.fonts[self.font] = love.graphics.setNewFont(mane.fonts[self.font], self.fontSize or 20)
@@ -192,7 +192,7 @@ function m:newPrint(text, font, x, y, fontSize)
     return obj
 end
 
-function m:newPolygon(vertices)
+function m:newPolygon(vertices, x, y)
     local obj = setmetatable({
         vertices = vertices,
         mode = "fill",
@@ -201,6 +201,8 @@ function m:newPolygon(vertices)
         angle = 0,
         xScale = 1,
         yScale = 1,
+        x = x or 0,
+        y = y or 0,
         isVisible = true,
         group = self,
         events = {
@@ -215,7 +217,7 @@ function m:newPolygon(vertices)
     return obj
 end
 
-function m:newPoints(points)
+function m:newPoint(points, x, y)
     local obj = setmetatable({
         points = points,
         size = 5,
@@ -224,6 +226,8 @@ function m:newPoints(points)
         angle = 0,
         xScale = 1,
         yScale = 1,
+        x = x or 0,
+        y = y or 0,
         isVisible = true,
         group = self,
         events = {
