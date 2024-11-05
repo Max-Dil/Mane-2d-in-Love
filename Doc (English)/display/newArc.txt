@@ -1,0 +1,49 @@
+Create:
+local arc = group:newArc(“pie”, 0, 0, 0, 50, 190, 250) -- newArc(arctype, x, y, radius, angle1, angle2, segments)
+
+Property:
+x = x, -- x position
+y = y, -- position y
+arctype = arctype, -- arc type
+radius = radius, -- radius
+angle1 = angle1 or 0, -- rotation1 (0-360)
+angle2 = angle2 or 0, -- rotation2 (0-360)
+mode = “fill”, -- drawing type
+_type = “newArc”,
+color = {1,1,1,1,1},
+angle = 0, -- rotation (0-360)
+xScale = 1,
+yScale = 1,
+segments = segments or 12,
+isVisible = true,
+group = self,
+events = {
+collision = {},
+endCollision = {},
+preCollision = {},
+postCollision = {},
+touch = {}
+}
+
+Methods:
+:setColor(r, g, b, a)
+:translate(x, y) -- change x, y (changes, not sets)
+:rotate(angle) -- change the rotation (changes, not sets)
+:scale(x, y) -- change the scale of x, y (changes, not sets)
+:moveToGroup(newGroup) -- Move the object to another group
+:remove() -- Delete object
+
+:addCollision(world, listener) -- Create a local event (Collision Start)
+:removeCollision(listener)
+
+:addEndCollision(world, listener) -- Create a local event (End of collision)
+:removeEndCollision(listener)
+
+:addPreCollision(world, listener) -- Create a local event (Before Collision)
+:removePreCollision(listener)
+
+:addPostCollision(world, listener) -- Create a local event (After collision)
+:removePostCollision(listener)
+
+:addClick(listener) -- Create a local event (Click)
+:removeClick(listener)

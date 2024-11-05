@@ -1,0 +1,13 @@
+function name.physics.globalCollision(a, b) -- a and b are objects that collided
+end -- the beginning of the collision
+
+function name.physics.andGlobalCollision(a, b) -- a and b are objects that collided
+end -- The end of the collision
+
+function name.physics.preGlobalCollision(a, b) -- a and b are objects that collided
+end -- Before the collision
+
+function name.physics.postGlobalCollision(a, b) -- a and and these are the objects that collided
+end -- After the collision
+
+Are you looking for a local collision? You're in display/Events/collision.txt

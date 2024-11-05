@@ -1,0 +1,37 @@
+Create:
+world:addBody(player, "dynamic", {shape = "rect", width = 50, height = 50}) -- addBody(obj, bodyType, options)
+
+Property:
+Добавляет данные прымо в объект, в котором был создан:
+    bodyOptions = options or {} -- настройки тела
+    body = love.physics.newBody(self.world, obj.x, obj.y, bodyType or "dynamic") -- хранится само тело
+    oldBodyX = obj.x -- нужен для синхронизации тела (лучше не трогать)
+    oldBodyY = obj.y -- нужен для синхронизации тела (лучше не трогать)
+    oldBodyAngle = obj.angle -- нужен для синхронизации тела (лучше не трогать)
+    fixture = love.physics.newFixture(obj.body, obj.shape) -- создание хитбокса
+    fixture:setUserData(obj) -- хранение объекта в fixture
+    world = self.world -- мир в котором создан
+
+Об options:
+options - таблица куда нужно вписать данные об теле
+options.shape - тип фигуры тела
+
+shape rect:
+options.width
+options.height
+
+shape circle:
+options.radius
+
+shape chain:
+options.loop
+options.points
+
+shape adge:
+options.x1
+options.y1
+options.x2
+options.y2
+
+shape polygon:
+options.vertices

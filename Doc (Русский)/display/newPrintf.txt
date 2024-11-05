@@ -1,0 +1,51 @@
+Create:
+local text = group:newPrintf("Hello World!", 100, 100) -- newPrintf(text, font, x, y, limit, align, fontSize)
+
+Property:
+    text = text, -- текст (текст или таблица colored)
+    x = x,
+    y = y,
+    limit = limit or 200, -- лимит ширины текста
+    align = align or "left", -- расположение текста
+    font = type(font) == "string" and mane.fonts[font] or love.graphics.getFont(), -- шрифт (загружаются автоматически)
+    fontSize = fontSize or 20, -- размер шрифта (устанавливать через метод setFontSize)
+    mode = "fill",
+    _type = "newPrint",
+    color = {1,1,1,1},
+    angle = 0,
+    xScale = 1,
+    yScale = 1,
+    isVisible = true,
+    group = self,
+    events = {
+        collision = {},
+        endCollision = {},
+        preCollision = {},
+        postCollision = {},
+        touch = {}
+    }
+
+Methods:
+    :setFontSize(fontSize)
+
+    :setColor(r, g, b, a)
+    :translate(x, y) -- изменить x, y (изменяет а не устанавливет)
+    :rotate(angle) -- изменить вращение (изменяет а не устанавливет)
+    :scale(x, y) -- изменить масштаб x, y (изменяет а не устанавливет)
+    :moveToGroup(newGroup) -- Переместить объект в другую группу
+    :remove() -- Удалить объект
+
+    :addCollision(world, listener) -- Создать локальное событие (Начало коллизии)
+    :removeCollision(listener)
+
+    :addEndCollision(world, listener) -- Создать локальное событие (Конец коллизии)
+    :removeEndCollision(listener)
+
+    :addPreCollision(world, listener) -- Создать локальное событие (Перед коллизией)
+    :removePreCollision(listener)
+
+    :addPostCollision(world, listener) -- Создать локальное событие (После коллизией)
+    :removePostCollision(listener)
+
+    :addClick(listener) -- Создать локальное событие (Нажатие)
+    :removeClick(listener)

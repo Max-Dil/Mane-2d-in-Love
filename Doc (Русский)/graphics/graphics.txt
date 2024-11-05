@@ -1,0 +1,6 @@
+newArrayImage(sprites)
+getPointsDimensions(points) -- получить ширину и высоту объекта точки по points
+getLineWidthHeight(points) -- получить ширину и высоту объекта линии по points
+getPolygonDimensions(points) -- получить ширину и высоту полигоны по vertices
+pointInPolygon(pgon, tx, ty, obj)
+getQuad(axis_x,axis_y,vert_x,vert_y)

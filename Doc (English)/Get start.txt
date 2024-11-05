@@ -1,0 +1,53 @@
+github = https://github.com/Max-Dil/Mane
+
+I welcome you to the Mane mini framework. It is based on creating 2d games
+using objects. Mane draws objects by itself, checks clicks by itself and
+has a local and global collision. There is also a module for synchronous timers
+and json tables - require("mane.lib.json").
+
+So far, it's raw, so I can't promise anything.
+
+To initialize mane, you need to write:
+require("mane")
+
+The first code should be written in mane.load:
+function mane.load()
+-- game code
+end
+
+In mane, all objects are stored in groups.
+Groups allow you to manage a large number of objects,
+you can use them to create both scenes and a camera.
+
+When initializing the game, mane will already create a group, it will
+be in mane.display.game
+
+
+
+Examples
+Creating a group:
+local group = mane.display.game:newGroup() -- instead of mane.display.game
+can be any group
+
+Creating a square:
+local rect = group:newRect(200, 200, 50, 50) -- square in x: 200 , y: 200, width: 50, height: 50
+
+Creating a circle:
+local circle = group:newCircle(300, 300, 50) -- circle in x: 300, y: 300, radius: 50
+
+Creating a Click listener:
+rect:addClick(function(e)
+    if e.phase == "began" then
+        print("The square was pressed")
+elseif e.phase == "moved" then
+        print("The square is still pressed")
+elseif e.phase == "ended"
+        print("The square was released")
+end
+    return true -- so that everyone behind it doesn't feel the click
+end)
+
+Creating a timer:
+local timer = mane.timer.new(1000, function() -- time: 1000 milliseconds(1 second), listener: listener
+    print("A second has passed")
+end)

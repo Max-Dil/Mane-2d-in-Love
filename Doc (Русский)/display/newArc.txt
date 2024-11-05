@@ -1,0 +1,49 @@
+Create:
+local arc = group:newArc("pie", 0, 0, 50, 190, 250) -- newArc(arctype, x, y, radius, angle1, angle2, segments)
+
+Property:
+    x = x, -- позиция x
+    y = y, -- позиция y
+    arctype = arctype, -- тип arc
+    radius = radius, -- радиус
+    angle1 = angle1 or 0, -- вращение1 (0-360)
+    angle2 = angle2 or 0, -- вращение2 (0-360)
+    mode = "fill", -- тип отрисовки
+    _type = "newArc",
+    color = {1,1,1,1},
+    angle = 0, -- вращение (0-360)
+    xScale = 1,
+    yScale = 1,
+    segments = segments or 12,
+    isVisible = true,
+    group = self,
+    events = {
+        collision = {},
+        endCollision = {},
+        preCollision = {},
+        postCollision = {},
+        touch = {}
+    }
+
+Methods:
+    :setColor(r, g, b, a)
+    :translate(x, y) -- изменить x, y (изменяет а не устанавливет)
+    :rotate(angle) -- изменить вращение (изменяет а не устанавливет)
+    :scale(x, y) -- изменить масштаб x, y (изменяет а не устанавливет)
+    :moveToGroup(newGroup) -- Переместить объект в другую группу
+    :remove() -- Удалить объект
+
+    :addCollision(world, listener) -- Создать локальное событие (Начало коллизии)
+    :removeCollision(listener)
+
+    :addEndCollision(world, listener) -- Создать локальное событие (Конец коллизии)
+    :removeEndCollision(listener)
+
+    :addPreCollision(world, listener) -- Создать локальное событие (Перед коллизией)
+    :removePreCollision(listener)
+
+    :addPostCollision(world, listener) -- Создать локальное событие (После коллизией)
+    :removePostCollision(listener)
+
+    :addClick(listener) -- Создать локальное событие (Нажатие)
+    :removeClick(listener)

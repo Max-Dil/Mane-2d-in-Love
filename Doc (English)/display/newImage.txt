@@ -1,0 +1,49 @@
+Create:
+local image = group:newImage(“icon.png”, 200, 200) -- newImage(image, x, y, xScale, yScale, ox, oy)
+
+The images themselves are loaded and stored in the mane.images table.
+
+Property:
+x = x,
+y = y,
+image = mane.images[image], -- image
+ox = ox or nil, -- x offset
+oy = oy or nil, -- y offset
+quad = nil, -- responsible for overlaying the quad object
+_type = “newImage”,
+color = {1,1,1,1,1},
+angle = 0,
+xScale = xScale or 1,
+yScale = yScale or 1,
+isVisible = true,
+group = self,
+events = {
+collision = {},
+endCollision = {},
+preCollision = {},
+postCollision = {},
+touch = {}
+}
+
+Methods:
+:setColor(r, g, b, a)
+:translate(x, y) -- change x, y (changes, not sets)
+:rotate(angle) -- change the rotation (changes, not sets)
+:scale(x, y) -- change the scale of x, y (changes, not sets)
+:moveToGroup(newGroup) -- Move the object to another group
+:remove() -- Delete object
+
+:addCollision(world, listener) -- Create a local event (Collision Start)
+:removeCollision(listener)
+
+:addEndCollision(world, listener) -- Create a local event (End of collision)
+:removeEndCollision(listener)
+
+:addPreCollision(world, listener) -- Create a local event (Before Collision)
+:removePreCollision(listener)
+
+:addPostCollision(world, listener) -- Create a local event (After collision)
+:removePostCollision(listener)
+
+:addClick(listener) -- Create a local event (Click)
+:removeClick(listener)

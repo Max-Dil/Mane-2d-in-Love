@@ -1,0 +1,50 @@
+object:addClick(listener) -- создать событие
+object:removeClick(listener) -- удалить событие
+
+Группы не поддерживаются для событий.
+
+Пример кода:
+require("mane")
+
+function mane.load()
+    local centerX, centerY = mane.display.centerX, mane.display.centerY
+    local group = mane.display.game
+    
+    local button = group:newRect(centerX, centerY, 100, 100)
+    button:addClick(function(e)
+        if e.phase == "began" then
+            button.x, button.y = centerX, centerY
+        elseif e.phase == "moved" then
+            button.x, button.y = e.x, e.y
+        else
+            print("Конец нажатия")
+        end
+    end)
+end
+
+Возращаемая таблица:
+
+Фаза began
+    phase = "began",
+    target = obj,
+    x = x,
+    y = y,
+    button = button,
+    isTouch = isTouch
+
+Фаза moved
+    phase = "moved",
+    target = obj,
+    x = x,
+    y = y,
+    dx = dx,
+    dy = dy,
+    button = 0
+
+Фаза ended
+    phase = "ended",
+    target = obj,
+    x = x,
+    y = y,
+    button = button,
+    isTouch = isTouch

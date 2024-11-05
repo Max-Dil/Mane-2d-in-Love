@@ -1,0 +1,51 @@
+Create:
+local text = group:newPrintf(“Hello World!”, 100, 100) -- newPrintf(text, font, x, y, limit, align, fontSize)
+
+Property:
+text = text, -- text (text or table colored)
+x = x,
+y = y,
+limit = limit or 200, -- text width limit
+align = align or “left”, -- text positioning
+font = type(font) == “string” and mane.fonts[font] or love.graphics.getFont(), -- font (loaded automatically)
+fontSize = fontSize or 20, -- font size (set via setFontSize method)
+mode = “fill”,
+_type = “newPrint”,
+color = {1,1,1,1,1},
+angle = 0,
+xScale = 1,
+yScale = 1,
+isVisible = true,
+group = self,
+events = {
+collision = {},
+endCollision = {},
+preCollision = {},
+postCollision = {},
+touch = {}
+}
+
+Methods:
+:setFontSize(fontSize)
+
+:setColor(r, g, b, a)
+:translate(x, y) -- change x, y (changes, not sets)
+:rotate(angle) -- modify rotation (modifies, not sets)
+:scale(x, y) -- change the scale of x, y (changes, not sets)
+:moveToGroup(newGroup) -- Move the object to another group
+:remove() -- Delete object
+
+:addCollision(world, listener) -- Create a local event (Collision Start)
+:removeCollision(listener)
+
+:addEndCollision(world, listener) -- Create a local event (End of collision)
+:removeEndCollision(listener)
+
+:addPreCollision(world, listener) -- Create a local event (Before Collision)
+:removePreCollision(listener)
+
+:addPostCollision(world, listener) -- Create a local event (After collision)
+:removePostCollision(listener)
+
+:addClick(listener) -- Create a local event (Click)
+:removeClick(listener)

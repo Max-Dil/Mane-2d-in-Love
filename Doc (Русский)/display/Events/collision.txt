@@ -1,0 +1,34 @@
+:addCollision(world, listener) -- Создать локальное событие (Начало коллизии)
+:removeCollision(listener)
+:addEndCollision(world, listener) -- Создать локальное событие (Конец коллизии)
+:removeEndCollision(listener)
+:addPreCollision(world, listener) -- Создать локальное событие (Перед коллизией)
+:removePreCollision(listener)
+:addPostCollision(world, listener) -- Создать локальное событие (После коллизией)
+:removePostCollision(listener)
+
+listener возращает a и b (первый объект и второй)
+
+Пример:
+require("mane")
+
+function mane.load()
+    local centerX, centerY = mane.display.centerX, mane.display.centerY
+    local group = mane.display.game
+    local world = mane.physics.newWorld(0, 500)
+
+    local platform = group:newRect(centerX, centerY+100, 300, 50)
+    platform.name = "platform"
+    world:addBody(platform, "static", {shape = "rect", width = 300, height = 50})
+
+    local player = group:newRect(centerX, centerY, 50, 50)
+    player.name = "player"
+    world:addBody(player, "dynamic", {shape = "rect", width = 50, height = 50})
+
+    player:addCollision(world, function (obj1, obj2)
+        print(obj1.name)
+        print(obj2.name)
+    end)
+
+    world.update = true -- включает обновление мира
+end

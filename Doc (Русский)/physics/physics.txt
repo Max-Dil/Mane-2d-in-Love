@@ -1,3 +1,16 @@
+Создать новый физический мир
+
+setCategory(obj, category)
+setMask(obj, mask)
+
+local world = mane.physics.newWorld() -- newWorld(gx, gy, sleep)
+побдробнее об объекте в файле physics/world.txt
+
+Создание физического тела
+world:addBody(obj, bodyType, options)
+побдробнее об объекте в файле physics/body.txt
+
+Пример проекта с физикой:
 require("mane")
 
 function mane.load()

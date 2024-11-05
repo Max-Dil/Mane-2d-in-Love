@@ -63,6 +63,21 @@ function m.new(obj, listener)
     table.insert(m.running, obj)
 end
 
+function m.remove(obj, listener)
+    for i = #obj.events.touch, 1, -1 do
+        if obj.events.touch[i] == listener then
+            table.remove(obj.events.touch, i)
+            break
+        end
+    end
+    for i = m.running, 1, -1 do
+        if m.running[i] == obj then
+            table.remove(m.running, i)
+            break
+        end
+    end
+end
+
 function m.mousepressed(x, y, button, isTouch)
     local function call_func(obj)
         if not obj.isTouch then
@@ -75,7 +90,8 @@ function m.mousepressed(x, y, button, isTouch)
                 target = obj,
                 x = x,
                 y = y,
-                button = button
+                button = button,
+                isTouch = isTouch
             })
             if result then
                 return true
@@ -190,7 +206,8 @@ function m.mousereleased(x, y, button, isTouch)
                     target = obj,
                     x = x,
                     y = y,
-                    button = button
+                    button = button,
+                    isTouch = isTouch
                 })
                 if result2 then
                     result = true

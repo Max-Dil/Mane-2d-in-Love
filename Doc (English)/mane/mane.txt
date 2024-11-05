@@ -1,0 +1,6 @@
+mane.load -- function called at startup
+
+mane.fonts -- array with loaded fonts
+mane.images -- array with loaded images
+
+mane.fps -- fps limit (default is 1000)

@@ -1,0 +1,45 @@
+Create:
+local point = group:newPoint({0,0, 100, 100, 200, 200}, 200, 200) -- newPoint(points, x, y)
+
+Property:
+    points = points,
+    size = 5, -- размер точек
+    _type = "newPoint",
+    color = {1,1,1,1},
+    angle = 0,
+    xScale = 1,
+    yScale = 1,
+    x = x or 0,
+    y = y or 0,
+    isVisible = true,
+    group = self,
+    events = {
+        collision = {},
+        endCollision = {},
+        preCollision = {},
+        postCollision = {},
+        touch = {}
+    }
+
+Methods:
+    :setColor(r, g, b, a)
+    :translate(x, y) -- изменить x, y (изменяет а не устанавливет)
+    :rotate(angle) -- изменить вращение (изменяет а не устанавливет)
+    :scale(x, y) -- изменить масштаб x, y (изменяет а не устанавливет)
+    :moveToGroup(newGroup) -- Переместить объект в другую группу
+    :remove() -- Удалить объект
+
+    :addCollision(world, listener) -- Создать локальное событие (Начало коллизии)
+    :removeCollision(listener)
+
+    :addEndCollision(world, listener) -- Создать локальное событие (Конец коллизии)
+    :removeEndCollision(listener)
+
+    :addPreCollision(world, listener) -- Создать локальное событие (Перед коллизией)
+    :removePreCollision(listener)
+
+    :addPostCollision(world, listener) -- Создать локальное событие (После коллизией)
+    :removePostCollision(listener)
+
+    :addClick(listener) -- Создать локальное событие (Нажатие)
+    :removeClick(listener)

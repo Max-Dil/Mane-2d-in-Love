@@ -1,0 +1,29 @@
+Create a new physical world
+
+set Category(obj, category)
+setMask(obj, mask)
+
+local world = mane.physics.NewWorld() -- NewWorld(gx, gy, sleep)
+more information about the object in the file physics/world.txt
+
+Creating a physical body
+world:add Body(obj, BodyType, options)
+for more information about the object, see the physics/body file.txt
+
+Example of a project with physics:
+require("mane")
+
+function name.load()
+    local centerX, centerY = menu.display.center, menu.display.century
+    local group = name.display.game
+    local world = many.physics.new World(0, 500)
+
+    local platform = group:new Rect(centerX, centerY+100, 300, 50)
+    world:addBody(platform, "static", {shape = "rect", width = 300, height = 50})
+
+    local player = group:new Rect(centerX, centerY, 50, 50)
+    world:addBody(player, "dynamic", {shape = "rect", width = 50, height = 50})
+
+    world.update = true -- enables
+end
+world update

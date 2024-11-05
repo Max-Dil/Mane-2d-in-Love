@@ -1,0 +1,13 @@
+function mane.physics.globalCollision(a, b) -- a и b это объекты которые столкнулись
+end -- начало коллизии
+
+function mane.physics.endGlobalCollision(a, b) -- a и b это объекты которые столкнулись
+end -- Конец коллизии
+
+function mane.physics.preGlobalCollision(a, b) -- a и b это объекты которые столкнулись
+end -- До коллизии
+
+function mane.physics.postGlobalCollision(a, b) -- a и b это объекты которые столкнулись
+end -- После коллизии
+
+Ищещь локальную коллизию? тебе в display/Events/collision.txt

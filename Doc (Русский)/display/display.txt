@@ -1,0 +1,18 @@
+В mane все обьекты хранятся в группах.
+Группы позволяют управлять большим количеством обьектом,
+с помощью них можно создать как сцены так и камеру.
+
+При инциализации игры mane уже создаст группу , она будет
+в mane.display.game
+
+Задать цвет фону
+mane.display.setBackGroundColor(1,1,0,1) -- r, g, b, a
+
+Режим отрисовки wireframe
+mane.display.wireframe = true -- default false
+
+Режим отрисовки всех физ тел
+mane.display.renderMode = "hybrid" -- default "normal"
+
+Сдвиг всей графики:
+mane.display.setShear(100, 100) -- kx, ky

@@ -32,7 +32,6 @@ end
 
 function base:remove()
     local group = self.group
-    base:removeFocus()
     if #self.events.touch >= 1 then
         for i = #mane.core.click.running, 1, -1 do
             if mane.core.click.running[i] == self then
@@ -99,6 +98,9 @@ function base:removePostCollision(listener)
 end
 function base:addClick(listener)
     mane.core.click.new(self, listener)
+end
+function base:removeClick(listener)
+    mane.core.click.remove(self, listener)
 end
 -- function base:addFocus()
 --     table.insert(mane.core.click.focus, self)
@@ -457,8 +459,5 @@ function m:newGroup()
     table.insert(self.obj, group)
     return group
 end
-
-mane.display.newGroup = m.newGroup
-mane.display.newRect = m.newRect
 
 mane.display.game = setmetatable({group = {}, obj = {}, x = 0, y = 0, angle = 0, xScale = 1, yScale = 1, isVisible = true}, {__index = m})

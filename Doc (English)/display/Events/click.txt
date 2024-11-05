@@ -1,0 +1,50 @@
+object:addClick(listener) -- create event
+object:removeClick(listener) -- remove event
+
+Groups are not supported for events.
+
+Example code:
+require(“mane”)
+
+function mane.load()
+local centerX, centerY = mane.display.centerX, mane.display.centerY
+local group = mane.display.game
+
+local button = group:newRect(centerX, centerY, 100, 100)
+button:addClick(function(e)
+if e.phase == “began” then
+button.x, button.y = centerX, centerY
+elseif e.phase == “moved” then
+button.x, button.y = e.x, e.y
+else
+print(“End of pressing”)
+end
+end)
+end
+
+Table to be returned:
+
+Phase began
+ phase = “began”,
+ target = obj,
+ x = x,
+ y = y,
+ button = button,
+ isTouch = isTouch
+
+Phase moved
+ phase = “moved”,
+ target = obj,
+ x = x,
+ y = y,
+ dx = dx,
+ dy = dy,
+ button = 0
+
+Phase ended
+ phase = “ended”,
+ target = obj,
+ x = x,
+ y = y,
+ button = button,
+ isTouch = isTouch

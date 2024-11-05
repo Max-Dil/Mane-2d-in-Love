@@ -1,0 +1,39 @@
+Create:
+world:addBody(player, “dynamic”, {shape = “rect”, width = 50, height = 50}) -- addBody(obj, bodyType, options)
+
+Property:
+Adds pymo data to the object in which it was created:
+bodyOptions = options or {} -- body settings
+body = love.physics.newBody(self.world, obj.x, obj.y, bodyType or “dynamic”) -- stores the body itself
+oldBodyX = obj.x -- needed for body synchronization (best left untouched)
+oldBodyY = obj.y -- needed for body synchronization (better not to touch)
+oldBodyAngle = obj.angle -- needed for body synchronization (better not to touch)
+fixture = love.physics.newFixture(obj.body, obj.shape) -- create a hitbox
+fixture:setUserData(obj) -- store object in fixture
+world = self.world -- the world in which created
+
+About options:
+options -- the table where the body data should be written in
+options.shape - body shape type
+
+Translated with DeepL.com (free version)
+
+shape rect:
+options.width
+options.height
+
+shape circle:
+options.radius
+
+shape chain:
+options.loop
+options.points
+
+shape adge:
+options.x1
+options.y1
+options.x2
+options.y2
+
+shape polygon:
+options.vertices
