@@ -17,7 +17,6 @@ isVisible = true,
 group = self,
 events = {
 collision = {},
-endCollision = {},
 preCollision = {},
 postCollision = {},
 touch = {}
@@ -31,17 +30,5 @@ Methods:
 :moveToGroup(newGroup) -- Move the object to another group
 :remove() -- Delete object
 
-:addCollision(world, listener) -- Create a local event (Collision Start)
-:removeCollision(listener)
-
-:addEndCollision(world, listener) -- Create a local event (End of collision)
-:removeEndCollision(listener)
-
-:addPreCollision(world, listener) -- Create a local event (Before Collision)
-:removePreCollision(listener)
-
-:addPostCollision(world, listener) -- Create a local event (After collision)
-:removePostCollision(listener)
-
-:addClick(listener) -- Create a local event (Click)
-:removeClick(listener)
+:addEvent(nameEvent, listener, ...)
+:removeEvent(nameEvent, listener)

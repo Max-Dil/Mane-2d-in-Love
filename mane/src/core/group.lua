@@ -428,8 +428,36 @@ function m:newGroup()
             key = {}
         }
     }, {__index = m})
+    function group.removeEvent(self, nameEvent, listener, ...)
+        local table = {...}
+        if nameEvent == "key" then
+            mane.core.key.remove(self, listener)
+        end
+    end
+    function group.addEvent(self, nameEvent, listener, ...)
+        local table = {...}
+        if nameEvent == "key" then
+            mane.core.key.new(self, listener)
+        end
+    end
     table.insert(self.obj, group)
     return group
 end
 
-mane.display.game = setmetatable({group = {}, obj = {}, x = 0, y = 0, angle = 0, xScale = 1, yScale = 1, isVisible = true}, {__index = m})
+mane.display.game = 
+setmetatable(
+    {group = {}, obj = {}, x = 0, y = 0, angle = 0, xScale = 1, yScale = 1, isVisible = true},
+    {__index = m}
+)
+function mane.display.game.removeEvent(self, nameEvent, listener, ...)
+    local table = {...}
+    if nameEvent == "key" then
+        mane.core.key.remove(self, listener)
+    end
+end
+function mane.display.game.addEvent(self, nameEvent, listener, ...)
+    local table = {...}
+    if nameEvent == "key" then
+        mane.core.key.new(self, listener)
+    end
+end

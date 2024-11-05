@@ -29,3 +29,4 @@ Methods:
     :remove() -- Удалить объект
 
     :addEvent(nameEvent, listener, ...)
+    :removeEvent(nameEvent, listener)

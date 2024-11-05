@@ -27,7 +27,7 @@ end
 m.keypressed = function (key, scancode, isrepeat)
     for i = 1, #m.running, 1 do
         local obj = m.running[i]
-        obj.events.key(
+        obj.events.key[i](
             {
                 phase = "began",
                 scancode = scancode,
@@ -41,7 +41,7 @@ end
 m.keyreleased = function (key)
     for i = 1, #m.running, 1 do
         local obj = m.running[i]
-        obj.events.key(
+        obj.events.key[i](
             {
                 phase = "ended",
                 key = key

@@ -16,6 +16,8 @@ function mane.load()
     world.update = true -- включает обновление мира
 
     player:addEvent("collision", function (e)
-        print(e.phase)
+        if e.phase == "began" then
+            player.body:setLinearVelocity(0, -500)
+        end
     end, world)
 end
