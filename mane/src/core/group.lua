@@ -40,6 +40,22 @@ function base:remove()
             end
         end
     end
+    if #self.events.key >= 1 then
+        for i = #mane.core.key.running, 1, -1 do
+            if mane.core.key.running[i] == self then
+                table.remove(mane.core.key.running, i)
+                break
+            end
+        end
+    end
+    if #self.events.update >= 1 then
+        for i = #mane.core.update.running, 1, -1 do
+            if mane.core.update.running[i] == self then
+                table.remove(mane.core.update.running, i)
+                break
+            end
+        end
+    end
     for i = #group.obj, 1, -1 do
         if group.obj[i] == self then
             table.remove(group.obj, i)
@@ -460,11 +476,35 @@ function m:newGroup()
             mane.core.update.new(self, listener)
         end
     end
+    function group.remove(self)
+        for i = 1, #self.obj, 1 do
+            pcall(function ()
+                self.obj[i]:remove()
+                self.obj[i] = nil
+            end)
+        end
+        self.obj = {}
+        for i = #self.group.obj, 1, -1 do
+            if self.group.obj[i] == self then
+                table.remove(self.group.obj, i)
+                break
+            end
+        end
+    end
+    function group.removeObjects(self)
+        for i = 1, #self.obj, 1 do
+            pcall(function ()
+                self.obj[i]:remove()
+                self.obj[i] = nil
+            end)
+        end
+        self.obj = {}
+    end
     table.insert(self.obj, group)
     return group
 end
 
-mane.display.game = 
+mane.display.game =
 setmetatable(
     {
         group = {}, obj = {}, x = 0, y = 0, angle = 0, xScale = 1, yScale = 1, isVisible = true,
@@ -490,4 +530,13 @@ function mane.display.game.addEvent(self, nameEvent, listener, ...)
     elseif nameEvent == "update" then
         mane.core.update.new(self, listener)
     end
+end
+function mane.display.game.removeObjects(self)
+    for i = 1, #self.obj, 1 do
+        pcall(function ()
+            self.obj[i]:remove()
+            self.obj[i] = nil
+        end)
+    end
+    self.obj = {}
 end
