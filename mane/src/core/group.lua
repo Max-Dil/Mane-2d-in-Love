@@ -484,6 +484,22 @@ function m:newGroup()
             end)
         end
         self.obj = {}
+        if #self.events.key >= 1 then
+            for i = #mane.core.key.running, 1, -1 do
+                if mane.core.key.running[i] == self then
+                    table.remove(mane.core.key.running, i)
+                    break
+                end
+            end
+        end
+        if #self.events.update >= 1 then
+            for i = #mane.core.update.running, 1, -1 do
+                if mane.core.update.running[i] == self then
+                    table.remove(mane.core.update.running, i)
+                    break
+                end
+            end
+        end
         for i = #self.group.obj, 1, -1 do
             if self.group.obj[i] == self then
                 table.remove(self.group.obj, i)

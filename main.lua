@@ -11,7 +11,7 @@ function mane.load()
     local platform = group:newRect(centerX, centerY+100, 300, 40)
     world:addBody(platform, "static", {shape = "rect", width =  300, height = 40})
 
-    mane.display.renderMode = "hybrid"
+    mane.display.renderMode = "hybrid" -- включить отрисовку всех физических тел
     world.update = true
 
     player:addEvent("update", function (dt)
