@@ -59,8 +59,10 @@ local function isPointOnLine(x, y, obj)
 end
 
 function m.new(obj, listener)
+    if #obj.events.touch <= 0 then
+        table.insert(m.running, obj)
+    end
     table.insert(obj.events.touch, listener)
-    table.insert(m.running, obj)
 end
 
 function m.remove(obj, listener)

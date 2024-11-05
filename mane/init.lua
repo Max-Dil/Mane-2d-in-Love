@@ -12,6 +12,7 @@ require("mane.src.core.display")
 require("mane.src.core.graphics")
 require("mane.src.core.physics")
 mane.core.click = require("mane.src.core.click")
+mane.core.key = require("mane.src.core.key")
 function love.load()
 mane.timer = require("mane.src.core.timer")
 
@@ -23,6 +24,14 @@ end
 local draw = require("mane.src.draw")
 function love.draw()
     draw()
+end
+
+function love.keypressed(key, scancode, isrepeat)
+	mane.core.key.keypressed(key, scancode, isrepeat)
+end
+
+function love.keyreleased(key)
+	mane.core.key.keyreleased(key)
 end
 
 function love.mousereleased(x, y, button, isTouch)

@@ -1,13 +1,11 @@
-:addCollision(world, listener) -- Создать локальное событие (Начало коллизии)
-:removeCollision(listener)
-:addEndCollision(world, listener) -- Создать локальное событие (Конец коллизии)
-:removeEndCollision(listener)
-:addPreCollision(world, listener) -- Создать локальное событие (Перед коллизией)
-:removePreCollision(listener)
-:addPostCollision(world, listener) -- Создать локальное событие (После коллизией)
-:removePostCollision(listener)
+:addEvent("collision", listener, world)
+:removeEvent("collision", listener)
 
-listener возращает a и b (первый объект и второй)
+:addEvent("preCollision", listener, world)
+:removeEvent("preCollision", listener)
+
+:addEvent("postCollision", listener, world)
+:removeEvent("postCollision", listener)
 
 Пример:
 require("mane")
@@ -25,10 +23,41 @@ function mane.load()
     player.name = "player"
     world:addBody(player, "dynamic", {shape = "rect", width = 50, height = 50})
 
-    player:addCollision(world, function (obj1, obj2)
-        print(obj1.name)
-        print(obj2.name)
-    end)
+    player:addEvent("collision", function (e)
+        print(e.target.name)
+        print(e.other.name)
+    end, world)
 
     world.update = true -- включает обновление мира
 end
+
+Фазы: collision
+began
+    {
+        phase = "began",
+        target = obj1,
+        other = obj2
+    }
+
+ended
+    {
+        phase = "ended",
+        target = obj1,
+        other = obj2
+    }
+
+Фазы: preCollision
+pre
+    {
+        phase = "pre",
+        target = obj1,
+        other = obj2
+    }
+
+Фазы: postCollision
+post
+    {
+        phase = "post",
+        target = obj1,
+        other = obj2
+    }

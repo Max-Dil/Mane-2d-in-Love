@@ -1,0 +1,18 @@
+:addEvent("key", listener)
+:removeEvent("key", listener)
+
+Возращаемая таблица:
+
+Фаза began
+    {
+        phase = "began",
+        scancode = scancode,
+        isrepeat = isrepeat,
+        key = key
+    }
+
+Фаза ended
+    {
+        phase = "ended",
+        key = key
+    }

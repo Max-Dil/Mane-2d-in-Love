@@ -17,7 +17,6 @@ Property:
     group = self,
     events = {
         collision = {},
-        endCollision = {},
         preCollision = {},
         postCollision = {},
         touch = {}
@@ -33,17 +32,4 @@ Methods:
     :moveToGroup(newGroup) -- Переместить объект в другую группу
     :remove() -- Удалить объект
 
-    :addCollision(world, listener) -- Создать локальное событие (Начало коллизии)
-    :removeCollision(listener)
-
-    :addEndCollision(world, listener) -- Создать локальное событие (Конец коллизии)
-    :removeEndCollision(listener)
-
-    :addPreCollision(world, listener) -- Создать локальное событие (Перед коллизией)
-    :removePreCollision(listener)
-
-    :addPostCollision(world, listener) -- Создать локальное событие (После коллизией)
-    :removePostCollision(listener)
-
-    :addClick(listener) -- Создать локальное событие (Нажатие)
-    :removeClick(listener)
+    :addEvent(nameEvent, listener, ...)

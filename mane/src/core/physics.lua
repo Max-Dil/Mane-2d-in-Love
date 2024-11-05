@@ -41,6 +41,53 @@ function worldClass:addBody(obj, bodyType, options)
     obj.world = self.world
 end
 
+function worldClass:addCollision(obj, listener)
+    if #obj.events.collision <= 0 then
+        table.insert(self.events.collision, obj)
+    end
+    table.insert(obj.events.collision, listener)
+end
+function worldClass:addPreCollision(obj, listener)
+    if #obj.events.preCollision <= 0 then
+        table.insert(self.events.preCollision, obj)
+    end
+    table.insert(obj.events.preCollision, listener)
+end
+function worldClass:removePreCollision(obj, listener)
+    for i = #obj.events.preCollision, 1, -1 do
+        if obj.events.preCollision[i] == listener then
+            table.remove(obj.events.preCollision, i)
+            break
+        end
+    end
+    for i = self.events.preCollision, 1, -1 do
+        if self.events.preCollision[i] == obj then
+            table.remove(self.events.preCollision, i)
+            break
+        end
+    end
+end
+function worldClass:addPostCollision(obj, listener)
+    if #obj.events.postCollision <= 0 then
+        table.insert(self.events.postCollision, obj)
+    end
+    table.insert(obj.events.postCollision, listener)
+end
+function worldClass:removePostCollision(obj, listener)
+    for i = #obj.events.postCollision, 1, -1 do
+        if obj.events.postCollision[i] == listener then
+            table.remove(obj.events.postCollision, i)
+            break
+        end
+    end
+    for i = self.events.postCollision, 1, -1 do
+        if self.events.postCollision[i] == obj then
+            table.remove(self.events.postCollision, i)
+            break
+        end
+    end
+end
+
 m.newWorld = function (gx, gy, sleep)
     local world = setmetatable({
         world = love.physics.newWorld( gx or 0, gy or 0, sleep and sleep or false),
@@ -48,72 +95,87 @@ m.newWorld = function (gx, gy, sleep)
     }, {__index = worldClass})
     world.events = {
         collision = {},
-        endCollision = {},
         preCollision = {},
         postCollision = {}
     }
     world.world:setCallbacks(
     function (a, b) -- коллизи
+        local obj1 = a:getUserData() or {}
+        local obj2 = b:getUserData() or {}
         for i = 1, #world.events.collision, 1 do
             for i2 = 1, #world.events.collision[i].events.collision, 1 do
-                local obj1 = a:getUserData() or {}
-                local obj2 = b:getUserData() or {}
-                if world.events.collision[i] == obj1 then
-                    world.events.collision[i].events.collision[i2](obj1, obj2)
+                if world.events.collision[i] == obj1 or world.events.collision[i] == obj2 then
+                    world.events.collision[i].events.collision[i2](
+                        {
+                            phase = "began",
+                            target = obj1,
+                            other = obj2
+                        }
+                    )
                 end
             end
         end
         if mane.physics.globalCollision then
-            local obj1 = a:getUserData() or {}
-            local obj2 = b:getUserData() or {}
             mane.physics.globalCollision(obj1, obj2)
         end
     end,
     function (a, b) -- после коллизии
-        for i = 1, #world.events.endCollision, 1 do
-            for i2 = 1, #world.events.endCollision[i].events.endCollision, 1 do
-                local obj1 = a:getUserData() or {}
-                local obj2 = b:getUserData() or {}
-                if world.events.endCollision[i] == obj1 then
-                    world.events.endCollision[i].events.endCollision[i2](obj1, obj2)
+        local obj1 = a:getUserData() or {}
+        local obj2 = b:getUserData() or {}
+        for i = 1, #world.events.collision, 1 do
+            for i2 = 1, #world.events.collision[i].events.collision, 1 do
+                if world.events.collision[i] == obj1 or world.events.collision[i] == obj2 then
+                    world.events.collision[i].events.collision[i2](
+                        {
+                            phase = "ended",
+                            target = obj1,
+                            other = obj2
+                        }
+                    )
                 end
             end
         end
         if mane.physics.endGlobalCollision then
-            local obj1 = a:getUserData() or {}
-            local obj2 = b:getUserData() or {}
             mane.physics.endGlobalCollision(obj1, obj2)
         end
     end,
     function (a, b) -- предикт до коллизии
+        local obj1 = a:getUserData() or {}
+        local obj2 = b:getUserData() or {}
         for i = 1, #world.events.preCollision, 1 do
             for i2 = 1, #world.events.preCollision[i].events.preCollision, 1 do
-                local obj1 = a:getUserData() or {}
-                local obj2 = b:getUserData() or {}
-                if world.events.preCollision[i] == obj1 then
-                    world.events.preCollision[i].events.preCollision[i2](obj1, obj2)
+                if world.events.preCollision[i] == obj1 or world.events.preCollision[i] == obj2 then
+                    world.events.preCollision[i].events.preCollision[i2](
+                        {
+                            phase = "pre",
+                            target = obj1,
+                            other = obj2
+                        }
+                    )
                 end
             end
         end
         if mane.physics.preGlobalCollision then
-            local obj1 = a:getUserData() or {}
-            local obj2 = b:getUserData() or {}
             mane.physics.preGlobalCollision(obj1, obj2)
         end
     end,
     function (a, b) -- предиет после коллизии
+        local obj1 = a:getUserData() or {}
+        local obj2 = b:getUserData() or {}
         for i = 1, #world.events.postCollision, 1 do
             for i2 = 1, #world.events.postCollision[i].events.postCollision, 1 do
-                local obj1 = a:getUserData() or {}
-                local obj2 = b:getUserData() or {}
-                if world.events.postCollision[i] == obj1 then
-                    world.events.postCollision[i].events.postCollision[i2](obj1, obj2)
+                if world.events.postCollision[i] == obj1 or world.events.postCollision[i] == obj2 then
+                    world.events.postCollision[i].events.postCollision[i2](
+                        {
+                            phase = "post",
+                            target = obj1,
+                            other = obj2
+                        }
+                    )
                 end
             end
         end
         if mane.physics.postGlobalCollision then
-            local obj1 = a:getUserData() or {}
-            local obj2 = b:getUserData() or {}
             mane.physics.postGlobalCollision(obj1, obj2)
         end
     end)

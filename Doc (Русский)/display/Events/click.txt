@@ -1,7 +1,7 @@
-object:addClick(listener) -- создать событие
-object:removeClick(listener) -- удалить событие
+:addEvent("touch", listener)
+:removeEvent("collision", listener)
 
-Группы не поддерживаются для событий.
+Группы не поддерживаются для этого события.
 
 Пример кода:
 require("mane")
@@ -11,7 +11,7 @@ function mane.load()
     local group = mane.display.game
     
     local button = group:newRect(centerX, centerY, 100, 100)
-    button:addClick(function(e)
+    button:addEvent("touch", function(e)
         if e.phase == "began" then
             button.x, button.y = centerX, centerY
         elseif e.phase == "moved" then
