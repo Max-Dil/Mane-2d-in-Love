@@ -21,7 +21,8 @@ events = {
 collision = {}, -- Start of collision
 preCollision = {}, -- Before collision
 postCollision = {}, -- After collision
-touch = {} -- Taps
+touch = {} -- Taps,
+update = {}
 } -- Event listeners
 
 Methods:

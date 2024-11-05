@@ -21,7 +21,8 @@ events = {
 collision = {},
 preCollision = {},
 postCollision = {},
-touch = {}
+touch = {},
+update = {}
 }
 
 Methods:

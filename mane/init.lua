@@ -13,12 +13,14 @@ require("mane.src.core.graphics")
 require("mane.src.core.physics")
 mane.core.click = require("mane.src.core.click")
 mane.core.key = require("mane.src.core.key")
+mane.core.update = require("mane.src.core.update")
 function love.load()
 mane.timer = require("mane.src.core.timer")
 
 local update = require("mane.src.update")
 function love.update(dt)
     update(dt)
+	mane.core.update.update(dt)
 end
 
 local draw = require("mane.src.draw")

@@ -61,6 +61,8 @@ function base:removeEvent(nameEvent, listener, ...)
                 break
             end
         end
+    elseif nameEvent == "update" then
+        mane.core.update.remove(self, listener)
     elseif nameEvent == "postCollision" then
         table[1]:removePostCollision(self, listener)
     elseif nameEvent == "preCollision" then
@@ -76,6 +78,8 @@ function base:addEvent(nameEvent, listener, ...)
         mane.core.click.new(self, listener)
     elseif nameEvent == "collision" then
         table[1]:addCollision(self, listener)
+    elseif nameEvent == "update" then
+        mane.core.update.new(self, listener)
     elseif nameEvent == "postCollision" then
         table[1]:addPostCollision(self, listener)
     elseif nameEvent == "preCollision" then
@@ -117,7 +121,8 @@ function m:newPrintf(text, font, x, y, limit, align, fontSize)
             preCollision = {},
             postCollision = {},
             touch = {},
-            key = {}
+            key = {},
+            update = {}
         }
     },{__index = base})
     table.insert(self.obj, obj)
@@ -156,7 +161,8 @@ function m:newPrint(text, font, x, y, fontSize)
             preCollision = {},
             postCollision = {},
             touch = {},
-            key = {}
+            key = {},
+            update = {}
         }
     },{__index = base})
     table.insert(self.obj, obj)
@@ -181,7 +187,8 @@ function m:newPolygon(vertices, x, y)
             preCollision = {},
             postCollision = {},
             touch = {},
-            key = {}
+            key = {},
+            update = {}
         }
     },{__index = base})
     table.insert(self.obj, obj)
@@ -206,7 +213,8 @@ function m:newPoint(points, x, y)
             preCollision = {},
             postCollision = {},
             touch = {},
-            key = {}
+            key = {},
+            update = {}
         }
     },{__index = base})
     table.insert(self.obj, obj)
@@ -233,7 +241,8 @@ function m:newLine(points, x, y)
             preCollision = {},
             postCollision = {},
             touch = {},
-            key = {}
+            key = {},
+            update = {}
         }
     },{__index = base})
     table.insert(self.obj, obj)
@@ -260,7 +269,8 @@ function m:newEllipse(x, y, radiusx, radiusy, segments)
             preCollision = {},
             postCollision = {},
             touch = {},
-            key = {}
+            key = {},
+            update = {}
         }
     },{__index = base})
     table.insert(self.obj, obj)
@@ -288,7 +298,8 @@ function m:newLayerImage(imageArray, layerindex, x, y, xScale, yScale, ox, oy)
             preCollision = {},
             postCollision = {},
             touch = {},
-            key = {}
+            key = {},
+            update = {}
         }
     },{__index = base})
     table.insert(self.obj, obj)
@@ -318,7 +329,8 @@ function m:newImage(image, x, y, xScale, yScale, ox, oy)
             preCollision = {},
             postCollision = {},
             touch = {},
-            key = {}
+            key = {},
+            update = {}
         }
     },{__index = base})
     table.insert(self.obj, obj)
@@ -351,7 +363,8 @@ function m:newArc(arctype, x, y, radius, angle1, angle2, segments)
             preCollision = {},
             postCollision = {},
             touch = {},
-            key = {}
+            key = {},
+            update = {}
         }
     },{__index = base})
     table.insert(self.obj, obj)
@@ -377,7 +390,8 @@ function m:newCircle(x, y, radius)
             preCollision = {},
             postCollision = {},
             touch = {},
-            key = {}
+            key = {},
+            update = {}
         }
     },{__index = base})
     table.insert(self.obj, obj)
@@ -406,7 +420,8 @@ function m:newRect(x, y, width, height, rx, ry, segments)
             preCollision = {},
             postCollision = {},
             touch = {},
-            key = {}
+            key = {},
+            update = {}
         }
     },{__index = base})
     table.insert(self.obj, obj)
@@ -425,19 +440,24 @@ function m:newGroup()
         yScale = 1,
         isVisible = true,
         events = {
-            key = {}
+            key = {},
+            update = {}
         }
     }, {__index = m})
     function group.removeEvent(self, nameEvent, listener, ...)
         local table = {...}
         if nameEvent == "key" then
             mane.core.key.remove(self, listener)
+        elseif nameEvent == "update" then
+            mane.core.update.remove(self, listener)
         end
     end
     function group.addEvent(self, nameEvent, listener, ...)
         local table = {...}
         if nameEvent == "key" then
             mane.core.key.new(self, listener)
+        elseif nameEvent == "update" then
+            mane.core.update.new(self, listener)
         end
     end
     table.insert(self.obj, group)
@@ -446,18 +466,28 @@ end
 
 mane.display.game = 
 setmetatable(
-    {group = {}, obj = {}, x = 0, y = 0, angle = 0, xScale = 1, yScale = 1, isVisible = true},
+    {
+        group = {}, obj = {}, x = 0, y = 0, angle = 0, xScale = 1, yScale = 1, isVisible = true,
+        events = {
+            key = {},
+            update = {}
+        }
+},
     {__index = m}
 )
 function mane.display.game.removeEvent(self, nameEvent, listener, ...)
     local table = {...}
     if nameEvent == "key" then
         mane.core.key.remove(self, listener)
+    elseif nameEvent == "update" then
+        mane.core.update.remove(self, listener)
     end
 end
 function mane.display.game.addEvent(self, nameEvent, listener, ...)
     local table = {...}
     if nameEvent == "key" then
         mane.core.key.new(self, listener)
+    elseif nameEvent == "update" then
+        mane.core.update.new(self, listener)
     end
 end

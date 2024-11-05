@@ -21,7 +21,8 @@ Property:
             collision = {},
             preCollision = {}, -- Перед коллзией
             postCollision = {}, -- После коллизии
-            touch = {} -- Нажатия
+            touch = {} -- Нажатия,
+            update = {} -- Каждый кадр
         } -- Слушатели событий
 
 Methods:

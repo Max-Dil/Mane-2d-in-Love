@@ -1,5 +1,6 @@
 :addEvent("key", listener)
 :removeEvent("key", listener)
+-- Группы поддерживаются
 
 Возращаемая таблица:
 

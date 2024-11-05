@@ -10,6 +10,10 @@ angle = 0, -- rotation
 xScale = 1, -- scale x
 yScale = 1, -- scale y
 isVisible = true -- whether the object is visible
+events = {
+    key = {},
+    update = {}
+}
 
 Methods:
 :newGroup()
@@ -24,3 +28,6 @@ Methods:
 :newPolygon(vertices, x, y)
 :newPrint(text, font, x, y, fontSize)
 :newPrintf(text, font, x, y, limit, align, fontSize)
+
+    :addEvent(nameEvent, listener, ...)
+    :removeEvent(nameEvent, listener)
