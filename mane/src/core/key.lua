@@ -78,4 +78,4 @@ m.keyreleased = function (key)
     end
 end
 
-return m
+mane.core.key = m

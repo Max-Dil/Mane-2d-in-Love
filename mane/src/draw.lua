@@ -24,6 +24,56 @@ SOFTWARE.
 
 local m = {}
 
+m.newContainer = function (container)
+    if not container.isVisible then return true end
+    love.graphics.setScissor(
+        container.x - container.width/2,
+        container.y - container.height/2,
+        container.width,
+        container.height
+    )
+    love.graphics.translate(container.x - container.width/2, container.y - container.height/2)
+    for i = 1, #container.obj, 1 do
+        local obj = container.obj[i]
+        if obj.isVisible then
+            love.graphics.push()
+            m[obj._type](obj)
+            love.graphics.pop()
+            if mane.display.renderMode == "hybrid" and obj.body and obj.shape then
+                local x, y = obj.body:getPosition()
+                local angle = obj.body:getAngle()
+
+                love.graphics.push()
+                love.graphics.translate(x, y)
+                love.graphics.rotate(angle)
+
+                if obj.body:getType() == "static" then
+                    love.graphics.setColor(1,0,0,1)
+                else
+                    love.graphics.setColor(0,1,0,1)
+                end
+                if obj.bodyOptions.shape == "rect" then
+                    love.graphics.rectangle("line", 0 - obj.bodyOptions.width/2, 0 - obj.bodyOptions.height/2, obj.bodyOptions.width, obj.bodyOptions.height)
+                elseif obj.bodyOptions.shape == "circle" then
+                    love.graphics.circle('line', 0, 0, obj.bodyOptions.radius)
+                elseif obj.bodyOptions.shape == "chain" then
+                    local points = obj.bodyOptions.points
+                    love.graphics.line(points)
+                elseif obj.bodyOptions.shape == "edge" then
+                    local x1, y1 = obj.bodyOptions.x1, obj.bodyOptions.y1
+                    local x2, y2 = obj.bodyOptions.x2, obj.bodyOptions.y2
+                    love.graphics.line(x1, y1, x2, y2)
+                elseif obj.bodyOptions.shape == "polygon" then
+                    local points = obj.bodyOptions.vertices
+                    love.graphics.polygon("line", points)
+                end
+                love.graphics.pop()
+            end
+        end
+    end
+    love.graphics.setScissor()
+end
+
 m.newPrintf = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)

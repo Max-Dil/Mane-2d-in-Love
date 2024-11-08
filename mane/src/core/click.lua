@@ -26,30 +26,7 @@ local m = {}
 m.running = {}
 m.focus = {}
 
-local function checkArcClick(obj, x, y)
-    local x1 = x - obj.x
-    local y1 = y - obj.y
-    local angle = math.rad(obj.angle)
-    local x2 = x1 * math.cos(angle) + y1 * math.sin(angle)
-    local y2 = -x1 * math.sin(angle) + y1 * math.cos(angle)
-    local theta = math.atan2(y2, x2)
-    if theta < 0 then
-    theta = theta + 2 * math.pi
-    end
-    local angle1 = (obj.angle1 / 180) * math.pi
-    local angle2 = (obj.angle2 / 180) * math.pi
-    if angle1 > angle2 then
-    angle1, angle2 = angle2, angle1
-    end
-    if (theta >= angle1 and theta <= angle2) then
-    local r = math.sqrt(x2 * x2 + y2 * y2)
-    if r <= obj.radius then
-    return true
-    end
-    end
-    return false
-end
-local function distancePointToLineSegment(x, y, x1, y1, x2, y2)
+local function distancePointLine(x, y, x1, y1, x2, y2)
     local lineLength = math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2))
     if lineLength == 0 then
         return math.sqrt(math.pow(x - x1, 2) + math.pow(y - y1, 2))
@@ -65,22 +42,73 @@ local function distancePointToLineSegment(x, y, x1, y1, x2, y2)
         return math.sqrt(math.pow(x - closestX, 2) + math.pow(y - closestY, 2))
     end
 end
-local function isPointOnLine(x, y, obj)
-    for i = 1, #obj.points - 2, 2 do
-        local width, height = mane.graphics.getLineWidthHeight(obj.points)
-        width, height = width*1.5, height*1.5
-        local ox = obj.x - width
-        local oy = obj.y - height
-        local x1 = ox + obj.points[i]
-        local y1 = oy + obj.points[i + 1]
-        local x2 = ox + obj.points[i + 2]
-        local y2 = oy + obj.points[i + 3]
-        if distancePointToLineSegment(x, y, x1, y1, x2, y2) <= obj.width / 2 then
-            return true
+local clickCheck = {
+    arc = function (obj, x, y)
+        local x1 = x - obj.x
+        local y1 = y - obj.y
+        local angle = math.rad(obj.angle)
+        local x2 = x1 * math.cos(angle) + y1 * math.sin(angle)
+        local y2 = -x1 * math.sin(angle) + y1 * math.cos(angle)
+        local theta = math.atan2(y2, x2)
+        if theta < 0 then
+        theta = theta + 2 * math.pi
         end
+        local angle1 = (obj.angle1 / 180) * math.pi
+        local angle2 = (obj.angle2 / 180) * math.pi
+        if angle1 > angle2 then
+        angle1, angle2 = angle2, angle1
+        end
+        if (theta >= angle1 and theta <= angle2) then
+        local r = math.sqrt(x2 * x2 + y2 * y2)
+        if r <= obj.radius then
+        return true
+        end
+        end
+        return false
+    end,
+    isPointOnLine = function(obj, x, y)
+        for i = 1, #obj.points - 2, 2 do
+            local width, height = mane.graphics.getLineWidthHeight(obj.points)
+            width, height = width*1.5, height*1.5
+            local ox = obj.x - width
+            local oy = obj.y - height
+            local x1 = ox + obj.points[i]
+            local y1 = oy + obj.points[i + 1]
+            local x2 = ox + obj.points[i + 2]
+            local y2 = oy + obj.points[i + 3]
+            if distancePointLine(x, y, x1, y1, x2, y2) <= obj.width / 2 then
+                return true
+            end
+        end
+        return false
+    end,
+    rect = function (obj, x, y)
+        if x > (obj.x - obj.width / 2) and x < (obj.x + obj.width / 2) and
+        y > (obj.y - obj.height / 2) and y < (obj.y + obj.height / 2) then
+        local distance_to_center_x = math.abs(x - obj.x)
+        local distance_to_center_y = math.abs(y - obj.y)
+        if distance_to_center_x > obj.width / 2 - obj.rx then
+            if distance_to_center_y > obj.height / 2 - obj.ry then
+            if (distance_to_center_x - obj.width / 2 + obj.rx)^2 + (distance_to_center_y - obj.height / 2 + obj.ry)^2 > obj.rx^2 then
+            return false
+            end
+        else
+            if distance_to_center_x - obj.width / 2 + obj.rx > obj.rx then
+            return false
+            end
+        end
+        else
+        if distance_to_center_y > obj.height / 2 - obj.ry then
+            if distance_to_center_y - obj.height / 2 + obj.ry > obj.ry then
+            return false
+            end
+        end
+        end
+        return true
+        end
+        return false
     end
-    return false
-end
+}
 
 function m.new(obj, listener)
     if #obj.events.touch <= 0 then
@@ -127,8 +155,7 @@ function m.mousepressed(x, y, button, isTouch)
     for i = 1, #m.running, 1 do
         local obj = m.running[i]
         if obj._type == "newRect" then
-            if x > (obj.x - obj.width / 2) and x < (obj.x + obj.width / 2) and
-               y > (obj.y - obj.height / 2) and y < (obj.y + obj.height / 2) then
+            if clickCheck.rect(obj, x, y) then
                 local result = call_func(obj)
                 if result then
                     break
@@ -142,7 +169,7 @@ function m.mousepressed(x, y, button, isTouch)
                 end
             end
         elseif obj._type == "newArc" then
-            if checkArcClick(obj, x, y) then
+            if clickCheck.arc(obj, x, y) then
                 local result = call_func(obj)
                 if result then
                     break
@@ -169,7 +196,7 @@ function m.mousepressed(x, y, button, isTouch)
                 end
             end
         elseif obj._type == "newLine" then
-            if isPointOnLine(x, y, obj) then
+            if clickCheck.isPointOnLine(obj, x, y) then
                 local result = call_func(obj)
                 if result then
                     break
@@ -275,4 +302,4 @@ function m.mousemoved(x, y, dx, dy)
     end
 end
 
-return m
+mane.core.click = m

@@ -127,6 +127,35 @@ function base:addEvent(nameEvent, listener, ...)
     end
 end
 
+function m:newContainer(x, y, width, height)
+    local obj = setmetatable({
+        x = x or 0,
+        y = y or 0,
+        width = width or 100,
+        height = height or 100,
+        _type = "newContainer",
+        isVisible = true,
+        obj = {},
+        group = self,
+        events = {
+            collision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {},
+            key = {},
+            update = {}
+        }
+    },{__index = base})
+    obj.insert = function (self, obj)
+        obj:moveToGroup(self)
+    end
+    obj.scale = nil
+    obj.rotate = nil
+    obj.setColor = nil
+    table.insert(self.obj, obj)
+    return obj
+end
+
 function m:newPrintf(text, font, x, y, limit, align, fontSize)
     if type(font) == "number" then
         x, y, limit, align = font, x, y, limit

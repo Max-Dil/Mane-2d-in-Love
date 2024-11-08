@@ -93,4 +93,4 @@ function m.update(dt)
     end
 end
 
-return m
+mane.timer = m

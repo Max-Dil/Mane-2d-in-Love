@@ -28,40 +28,42 @@ m.worlds = {}
 local worldClass = {}
 
 function worldClass:addBody(obj, bodyType, options)
-    if options then
-        if options.shape == "rect" then
-            if not (options.width or options.height) then
-                error("addBody no width or height is options",2)
-            end
-            obj.shape = love.physics.newRectangleShape(options.width, options.height)
-        elseif options.shape == "circle" then
-            if not options.radius then
-                error("addBody no radius is options",2)
-            end
-            obj.shape = love.physics.newCircleShape(options.radius)
-        elseif options.shape == "chain" then
-            if not options.points then
-                error("addBody no points is options",2)
-            end
-            obj.shape = love.physics.newChainShape( options.loop or false, obj.points )
-        elseif options.shape == "edge" then
-            if not (options.x1 or options.y1 or options.x2 or options.y2) then
-                error("addBody no x1 or x2 or y1 or y2 is options",2)
-            end
-            obj.shape = love.physics.newEdgeShape( options.x1, options.y1, options.x2, options.y2 )
-        elseif options.shape == "polygon" then
-            if not options.vertices then
-                error("addBody no vertices is options",2)
-            end
-            obj.shape = love.physics.newPolygonShape( obj.vertices )
+    options = options or {}
+    if options.shape == "rect" then
+        if not (options.width or options.height) then
+            error("addBody no width or height is options",2)
         end
+        obj.shape = love.physics.newRectangleShape(options.width, options.height)
+    elseif options.shape == "circle" then
+        if not options.radius then
+            error("addBody no radius is options",2)
+        end
+        obj.shape = love.physics.newCircleShape(options.radius)
+    elseif options.shape == "chain" then
+        if not options.points then
+            error("addBody no points is options",2)
+        end
+        obj.shape = love.physics.newChainShape( options.loop or false, obj.points )
+    elseif options.shape == "edge" then
+        if not (options.x1 or options.y1 or options.x2 or options.y2) then
+            error("addBody no x1 or x2 or y1 or y2 is options",2)
+        end
+        obj.shape = love.physics.newEdgeShape( options.x1, options.y1, options.x2, options.y2 )
+    elseif options.shape == "polygon" then
+        if not options.vertices then
+            error("addBody no vertices is options",2)
+        end
+        obj.shape = love.physics.newPolygonShape( obj.vertices )
     end
     obj.bodyOptions = options or {}
+
     obj.body = love.physics.newBody(self.world, obj.x, obj.y, bodyType or "dynamic")
     obj.oldBodyX, obj.oldBodyY = obj.x, obj.y
     obj.oldBodyAngle = obj.angle
+
     obj.fixture = love.physics.newFixture(obj.body, obj.shape)
     obj.fixture:setUserData(obj)
+
     obj.world = self.world
 end
 

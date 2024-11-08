@@ -11,5 +11,5 @@ function mane.load()
     local player = group:newRect(centerX, centerY, 50, 50)
     world:addBody(player, "dynamic", {shape = "rect", width = 50, height = 50})
 
-    world.update = true -- включает обновление мира
+    world.update = true
 end

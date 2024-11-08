@@ -1,3 +1,6 @@
+_G.love = love
+function love.distance(x1, y1, x2, y2) local dx = x2 - x1 local dy = y2 - y1 return math.sqrt(dx * dx + dy * dy) end
+
 --[[
 MIT License
 
@@ -22,9 +25,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ]]
 
-_G.love = love
-function love.distance(x1, y1, x2, y2) local dx = x2 - x1 local dy = y2 - y1 return math.sqrt(dx * dx + dy * dy) end
-
 _G.mane = {
     load = function () end,
     images = {},
@@ -33,14 +33,13 @@ _G.mane = {
 	core = {},
 	json = require("mane.lib.json")
 }
-require("mane.src.core.display")
-require("mane.src.core.graphics")
-require("mane.src.core.physics")
-mane.core.click = require("mane.src.core.click")
-mane.core.key = require("mane.src.core.key")
-mane.core.update = require("mane.src.core.update")
+
+local moduls = {"display","graphics","physics","key","update","click","timer"}
+for _, name in ipairs(moduls) do
+	require("mane.src.core."..name)
+end
+
 function love.load()
-mane.timer = require("mane.src.core.timer")
 
 local update = require("mane.src.update")
 function love.update(dt)

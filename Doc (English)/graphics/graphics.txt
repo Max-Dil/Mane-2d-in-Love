@@ -1,6 +1,0 @@
-newArrayImage(sprites)
-getPointsDimensions(points) -- get width and height of the point object by points
-getLineWidthHeight(points) -- get width and height of line object by points
-getPolygonDimensions(points) -- get width and height of polygons by vertices
-pointInPolygon(pgon, tx, ty, obj)
-getQuad(axis_x,axis_y,vert_x,vert_y)

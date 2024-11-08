@@ -60,4 +60,4 @@ m.update = function (dt)
     end
 end
 
-return m
+mane.core.update = m
