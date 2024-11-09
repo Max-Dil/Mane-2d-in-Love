@@ -28,7 +28,7 @@ local running = {}
 local timer = {}
 
 function timer:cancel()
-    for i = 1, #running, 1 do
+    for i = #running, 1, -1 do
         if running[i] == self then
             table.remove(running, i)
             break
@@ -77,7 +77,10 @@ m.resume = function(timer)
 end
 
 function m.update(dt)
-    for i = 1, #running, 1 do
+    for i = #running, 1, -1 do
+        if not running[i] then
+            table.remove(running, i)
+        end
         if running[i].on then
             running[i].time = running[i].time - (dt * 1000)
             if running[i].time <= 0 then

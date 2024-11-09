@@ -63,6 +63,12 @@ function base:remove()
                 break
             end
         end
+        for i = #mane.core.click.focus, 1, -1 do
+            if mane.core.click.focus[i] == self then
+                table.remove(mane.core.click.focus, i)
+                break
+            end
+        end
     end
     if #self.events.key >= 1 then
         for i = #mane.core.key.running, 1, -1 do
@@ -530,11 +536,8 @@ function m:newGroup()
         end
     end
     function group.remove(self)
-        for i = 1, #self.obj, 1 do
-            pcall(function ()
-                self.obj[i]:remove()
-                self.obj[i] = nil
-            end)
+        for i = #self.obj, 1, -1 do
+            self.obj[i]:remove()
         end
         self.obj = {}
         if #self.events.key >= 1 then
@@ -561,7 +564,7 @@ function m:newGroup()
         end
     end
     function group.removeObjects(self)
-        for i = 1, #self.obj, 1 do
+        for i = #self.obj, 1, -1 do
             pcall(function ()
                 self.obj[i]:remove()
                 self.obj[i] = nil
@@ -601,7 +604,7 @@ function mane.display.game.addEvent(self, nameEvent, listener, ...)
     end
 end
 function mane.display.game.removeObjects(self)
-    for i = 1, #self.obj, 1 do
+    for i = #self.obj, 1, -1 do
         pcall(function ()
             self.obj[i]:remove()
             self.obj[i] = nil
@@ -610,11 +613,9 @@ function mane.display.game.removeObjects(self)
     self.obj = {}
 end
 function mane.display.game.remove(self)
-    for i = 1, #self.obj, 1 do
-        pcall(function ()
-            self.obj[i]:remove()
-            self.obj[i] = nil
-        end)
+    for i = #self.obj, 1, -1 do
+        self.obj[i]:remove()
+        self.obj[i] = nil
     end
     self.obj = {}
     if #self.events.key >= 1 then
