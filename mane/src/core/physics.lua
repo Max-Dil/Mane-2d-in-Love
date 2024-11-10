@@ -28,6 +28,10 @@ m.worlds = {}
 local worldClass = {}
 
 function worldClass:addBody(obj, bodyType, options)
+    if obj.fixture then
+        obj.fixture:destroy()
+        obj.fixture = nil
+    end
     options = options or {}
     if options.shape == "rect" then
         if not (options.width or options.height) then

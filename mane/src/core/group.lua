@@ -56,6 +56,7 @@ end
 
 function base:remove()
     local group = self.group
+    self:removeBody()
     if #self.events.touch >= 1 then
         for i = #mane.core.click.running, 1, -1 do
             if mane.core.click.running[i] == self then
@@ -133,6 +134,15 @@ function base:addEvent(nameEvent, listener, ...)
     end
 end
 
+function base:removeBody()
+    if self.fixture then
+        self.fixture:destroy()
+    end
+    self.fixture = nil
+    self.body = nil
+    self.shape = nil
+end
+
 function m:newContainer(x, y, width, height)
     local obj = setmetatable({
         x = x or 0,
@@ -158,6 +168,7 @@ function m:newContainer(x, y, width, height)
     obj.scale = nil
     obj.rotate = nil
     obj.setColor = nil
+    obj.removeBody = nil
     table.insert(self.obj, obj)
     return obj
 end
