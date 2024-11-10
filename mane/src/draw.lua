@@ -214,7 +214,11 @@ m.newGroup = function(group)
                 if obj.body:getType() == "static" then
                     love.graphics.setColor(1,0,0,1)
                 else
-                    love.graphics.setColor(0,1,0,1)
+                    if obj.body:isActive() then
+                        love.graphics.setColor(0,1,0,1)
+                    else
+                        love.graphics.setColor(0.5,0.5,0.5,1)
+                    end
                 end
                 if obj.bodyOptions.shape == "rect" then
                     love.graphics.rectangle("line", 0 - obj.bodyOptions.width/2, 0 - obj.bodyOptions.height/2, obj.bodyOptions.width, obj.bodyOptions.height)

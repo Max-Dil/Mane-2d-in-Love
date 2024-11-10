@@ -57,7 +57,8 @@ m.keypressed = function (key, scancode, isrepeat)
                     phase = "began",
                     key = key,
                     scancode = scancode,
-                    isrepeat = isrepeat
+                    isrepeat = isrepeat,
+                    target = obj
                 }
             )
         end
@@ -71,7 +72,8 @@ m.keyreleased = function (key)
             obj.events.key[i2](
                 {
                     phase = "ended",
-                    key = key
+                    key = key,
+                    target = obj
                 }
             )
         end

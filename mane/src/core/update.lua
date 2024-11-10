@@ -47,7 +47,8 @@ m.update = function (dt)
         for i2 = 1, #obj.events.update, 1 do
             obj.events.update[i2](
                 {
-                    dt = dt
+                    dt = dt,
+                    target = obj
                 }
             )
         end

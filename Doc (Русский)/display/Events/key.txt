@@ -9,11 +9,13 @@
         phase = "began",
         scancode = scancode,
         isrepeat = isrepeat,
-        key = key
+        key = key,
+        target = obj
     }
 
 Фаза ended
     {
         phase = "ended",
-        key = key
+        key = key,
+        target = obj
     }
