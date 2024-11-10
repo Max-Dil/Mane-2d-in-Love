@@ -37,3 +37,5 @@ Methods:
 
     :addEvent(nameEvent, listener, ...)
     :removeEvent(nameEvent, listener)
+
+    :removeBody()

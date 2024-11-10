@@ -12,4 +12,9 @@ function mane.load()
     world:addBody(player, "dynamic", {shape = "rect", width = 50, height = 50})
 
     world.update = true
+
+    local text = group:newPrint("Фпс", 40, 40)
+    text:addEvent("update", function ()
+        text.text = love.timer.getFPS()
+    end)
 end

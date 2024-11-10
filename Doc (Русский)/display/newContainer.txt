@@ -27,3 +27,5 @@ Methods:
     :removeEvent(nameEvent, listener)
 
     :insert() -- insert object in Container
+
+    :removeBody()

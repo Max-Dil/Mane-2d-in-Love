@@ -281,7 +281,7 @@ function m:newPolygon(vertices, x, y)
     return obj
 end
 
-function m:newPoint(points, x, y)
+function m:newPoints(points, x, y)
     local obj = setmetatable({
         points = points,
         size = 5,

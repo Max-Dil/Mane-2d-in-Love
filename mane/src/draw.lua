@@ -113,7 +113,7 @@ m.newPolygon = function (obj)
     love.graphics.polygon(obj.mode, obj.vertices)
 end
 
-m.newPoint = function (obj)
+m.newPoints = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
     local width, height = mane.graphics.getPointsDimensions(obj.points)

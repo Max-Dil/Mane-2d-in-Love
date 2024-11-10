@@ -1,5 +1,5 @@
 Create:
-local point = group:newPoint({0,0, 100, 100, 200, 200}, 200, 200) -- newPoint(points, x, y)
+local point = group:newPoints({0,0, 100, 100, 200, 200}, 200, 200) -- newPoints(points, x, y)
 
 Property:
     points = points,
@@ -31,3 +31,5 @@ Methods:
 
     :addEvent(nameEvent, listener, ...)
     :removeEvent(nameEvent, listener)
+
+    :removeBody()

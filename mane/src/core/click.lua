@@ -196,7 +196,7 @@ function m.mousepressed(x, y, button, isTouch)
                     break
                 end
             end
-        elseif obj._type == "newPoint" then
+        elseif obj._type == "newPoints" then
             for j = 1, #obj.points, 2 do
                 local width, height = mane.graphics.getPointsDimensions(obj.points)
                 width, height = width*1.5, height*1.5
@@ -232,6 +232,14 @@ function m.mousepressed(x, y, button, isTouch)
             local x2 = obj.x + textWidth / 2
             local y2 = obj.y + textHeight / 2
             if x >= x1 and x <= x2 and y >= y1 and y <= y2 then
+                local result = call_func(obj)
+                if result then
+                    break
+                end
+            end
+        elseif obj._type == "newContainer" then
+            if x > (obj.x - obj.width / 2) and x < (obj.x + obj.width / 2) and
+               y > (obj.y - obj.height / 2) and y < (obj.y + obj.height / 2) then
                 local result = call_func(obj)
                 if result then
                     break
