@@ -285,7 +285,7 @@ function m:newPoints(points, x, y)
     local obj = setmetatable({
         points = points,
         size = 5,
-        _type = "newPoint",
+        _type = "newPoints",
         color = {1,1,1,1},
         angle = 0,
         xScale = 1,
