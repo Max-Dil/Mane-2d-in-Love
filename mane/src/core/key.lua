@@ -49,7 +49,7 @@ end
 
 
 m.keypressed = function (key, scancode, isrepeat)
-    for i = 1, #m.running, 1 do
+    for i = #m.running, 1, -1 do
         local obj = m.running[i]
         for i2 = 1, #obj.events.key, 1 do
             obj.events.key[i2](
@@ -66,7 +66,7 @@ m.keypressed = function (key, scancode, isrepeat)
 end
 
 m.keyreleased = function (key)
-    for i = 1, #m.running, 1 do
+    for i = #m.running, 1, -1 do
         local obj = m.running[i]
         for i2 = 1, #obj.events.key, 1 do
             obj.events.key[i2](

@@ -151,8 +151,8 @@ m.newWorld = function (gx, gy, sleep)
     function (a, b) -- коллизи
         local obj1 = a:getUserData() or {}
         local obj2 = b:getUserData() or {}
-        for i = 1, #world.events.collision, 1 do
-            for i2 = 1, #world.events.collision[i].events.collision, 1 do
+        for i = #world.events.collision, 1, -1 do
+            for i2 = #world.events.collision[i].events.collision, 1, -1 do
                 if world.events.collision[i] == obj1 or world.events.collision[i] == obj2 then
                     world.events.collision[i].events.collision[i2](
                         {
@@ -171,8 +171,8 @@ m.newWorld = function (gx, gy, sleep)
     function (a, b) -- после коллизии
         local obj1 = a:getUserData() or {}
         local obj2 = b:getUserData() or {}
-        for i = 1, #world.events.collision, 1 do
-            for i2 = 1, #world.events.collision[i].events.collision, 1 do
+        for i = #world.events.collision, 1, -1 do
+            for i2 = #world.events.collision[i].events.collision, 1, -1 do
                 if world.events.collision[i] == obj1 or world.events.collision[i] == obj2 then
                     world.events.collision[i].events.collision[i2](
                         {
@@ -191,8 +191,8 @@ m.newWorld = function (gx, gy, sleep)
     function (a, b) -- предикт до коллизии
         local obj1 = a:getUserData() or {}
         local obj2 = b:getUserData() or {}
-        for i = 1, #world.events.preCollision, 1 do
-            for i2 = 1, #world.events.preCollision[i].events.preCollision, 1 do
+        for i = #world.events.preCollision, 1, -1 do
+            for i2 = #world.events.preCollision[i].events.preCollision, 1, -1 do
                 if world.events.preCollision[i] == obj1 or world.events.preCollision[i] == obj2 then
                     world.events.preCollision[i].events.preCollision[i2](
                         {
@@ -211,8 +211,8 @@ m.newWorld = function (gx, gy, sleep)
     function (a, b) -- предиет после коллизии
         local obj1 = a:getUserData() or {}
         local obj2 = b:getUserData() or {}
-        for i = 1, #world.events.postCollision, 1 do
-            for i2 = 1, #world.events.postCollision[i].events.postCollision, 1 do
+        for i = #world.events.postCollision, 1, -1 do
+            for i2 = #world.events.postCollision[i].events.postCollision, 1, -1 do
                 if world.events.postCollision[i] == obj1 or world.events.postCollision[i] == obj2 then
                     world.events.postCollision[i].events.postCollision[i2](
                         {

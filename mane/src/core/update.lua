@@ -42,7 +42,7 @@ function m.remove(obj, listener)
 end
 
 m.update = function (dt)
-    for i = 1, #m.running, 1 do
+    for i = #m.running, 1, -1 do
         local obj = m.running[i]
         for i2 = 1, #obj.events.update, 1 do
             obj.events.update[i2](
