@@ -24,6 +24,15 @@ SOFTWARE.
 
 local m = {}
 
+m.newParticle = function (obj)
+    local color = obj.color or {1,1,1,1}
+    love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
+    love.graphics.translate(obj.x, obj.y)
+    love.graphics.rotate(math.rad(obj.angle))
+    love.graphics.scale(obj.xScale, obj.yScale)
+    love.graphics.draw(obj.particle, 0, 0)
+end
+
 m.newContainer = function (container)
     if not container.isVisible then return true end
     love.graphics.setScissor(

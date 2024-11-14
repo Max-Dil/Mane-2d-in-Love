@@ -31,7 +31,8 @@ _G.mane = {
     fonts = {},
     fps = 1000,
 	core = {},
-	json = require("mane.lib.json")
+	json = require("mane.lib.json"),
+	speed = 0
 }
 
 local moduls = {"display","graphics","physics","key","update","click","timer"}

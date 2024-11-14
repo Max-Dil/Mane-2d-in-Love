@@ -124,13 +124,25 @@ function base:addEvent(nameEvent, listener, ...)
     elseif nameEvent == "touch" then
         mane.core.click.new(self, listener)
     elseif nameEvent == "collision" then
-        table[1]:addCollision(self, listener)
+        if #table < 1 then
+            self.world:addCollision(self, listener)
+        else
+            table[1]:addCollision(self, listener)
+        end
     elseif nameEvent == "update" then
         mane.core.update.new(self, listener)
     elseif nameEvent == "postCollision" then
-        table[1]:addPostCollision(self, listener)
+        if #table < 1 then
+            self.world:addPostCollision(self, listener)
+        else
+            table[1]:addPostCollision(self, listener)
+        end
     elseif nameEvent == "preCollision" then
-        table[1]:addPreCollision(self, listener)
+        if #table < 1 then
+            self.world:addPreCollision(self, listener)
+        else
+            table[1]:addPreCollision(self, listener)
+        end
     end
 end
 
@@ -141,6 +153,71 @@ function base:removeBody()
     self.fixture = nil
     self.body = nil
     self.shape = nil
+end
+
+function base:toBack()
+    local group = self.group
+    for i = #group.obj, 1, -1 do
+        if group.obj[i] == self then
+            table.remove(group.obj, i)
+            break
+        end
+    end
+    table.insert(group.obj, 1, self)
+end
+
+function base:toFront()
+    local group = self.group
+    for i = #group.obj, 1, -1 do
+        if group.obj[i] == self then
+            table.remove(group.obj, i)
+            break
+        end
+    end
+    table.insert(group.obj, self)
+end
+
+function m:newParticle(image, buffer, x, y)
+    if not mane.images[image] then
+        mane.images[image] = love.graphics.newImage(image)
+    end
+    local obj = setmetatable({
+        buffer = buffer,
+        size = 5,
+        _type = "newParticle",
+        color = {1,1,1,1},
+        angle = 0,
+        xScale = 1,
+        yScale = 1,
+        x = x or 0,
+        y = y or 0,
+        particle = love.graphics.newParticleSystem(mane.images[image], buffer),
+        image = mane.images[image],
+        setImage = function (self, image)
+            if not mane.images[image] then
+                mane.images[image] = love.graphics.newImage(image)
+            end
+            self.particle = love.graphics.newParticleSystem(mane.images[image], self.buffer)
+            self.image = mane.images[image]
+        end,
+        setBuffer = function (self, buffer)
+            self.particle = love.graphics.newParticleSystem(self.image, buffer)
+            self.buffer = buffer
+        end,
+        isVisible = true,
+        update = false,
+        group = self,
+        events = {
+            collision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {},
+            key = {},
+            update = {}
+        }
+    },{__index = base})
+    table.insert(self.obj, obj)
+    return obj
 end
 
 function m:newContainer(x, y, width, height)
@@ -582,6 +659,27 @@ function m:newGroup()
             end)
         end
         self.obj = {}
+    end 
+    function group:toBack(self)
+        local group = self.group
+        for i = #group.obj, 1, -1 do
+            if group.obj[i] == self then
+                table.remove(group.obj, i)
+                break
+            end
+        end
+        table.insert(group.obj, 1, self)
+    end
+
+    function group:toFront(self)
+        local group = self.group
+        for i = #group.obj, 1, -1 do
+            if group.obj[i] == self then
+                table.remove(group.obj, i)
+                break
+            end
+        end
+        table.insert(group.obj, self)
     end
     table.insert(self.obj, group)
     return group

@@ -87,7 +87,7 @@ function worldClass:addBody(obj, bodyType, options)
     obj.fixture = love.physics.newFixture(obj.body, obj.shape)
     obj.fixture:setUserData(obj)
 
-    obj.world = self.world
+    obj.world = self
 end
 
 function worldClass:addCollision(obj, listener)

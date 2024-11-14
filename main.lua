@@ -13,8 +13,5 @@ function mane.load()
 
     world.update = true
 
-    local text = group:newPrint("Фпс", 40, 40)
-    text:addEvent("update", function ()
-        text.text = love.timer.getFPS()
-    end)
+    local group = mane.display.game -- default group mane 2d
 end
