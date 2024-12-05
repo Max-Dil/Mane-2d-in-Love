@@ -31,6 +31,9 @@ m.centerY = m.height / 2
 m.setBackGroundColor = function (r, g, b, a)
     love.graphics.setBackgroundColor( r or 1, g or 1, b or 1, a or 1 )
 end
+m.setBackgroundColor = function (r, g, b, a)
+    love.graphics.setBackgroundColor( r or 1, g or 1, b or 1, a or 1 )
+end
 
 m.wireframe = false
 
@@ -39,6 +42,7 @@ m.setShear = function (kx, ky)
 end
 
 m.renderMode = "normal"
+
 
 mane.display = m
 require("mane.src.core.group")

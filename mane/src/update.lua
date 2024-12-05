@@ -35,7 +35,6 @@ m.groupUpdate = function(group, dt)
         else
             if obj.body then
                 if obj.body:getType() == 'dynamic' then
-
                     if obj.x ~= obj.oldBodyX then
                         obj.body:setX(obj.body:getX() + (obj.x - obj.oldBodyX))
                     end
@@ -48,16 +47,16 @@ m.groupUpdate = function(group, dt)
                         obj.body:setAngle(obj.body:getAngle() + math.rad(obj.angle - obj.oldBodyAngle))
                     end
 
-                    obj.x = obj.body:getX()
-                    obj.y = obj.body:getY()
+                    obj.x = obj.body:getX() + obj.bodyOptions.offsetX
+                    obj.y = obj.body:getY() + obj.bodyOptions.offsetY
                     obj.angle = (obj.body:getAngle() / math.pi) * 180
 
                     obj.oldBodyX = obj.x
                     obj.oldBodyY = obj.y
                     obj.oldBodyAngle = obj.angle
                 else
-                    obj.body:setX(obj.x)
-                    obj.body:setY(obj.y)
+                    obj.body:setX(obj.x + obj.bodyOptions.offsetX)
+                    obj.body:setY(obj.y + obj.bodyOptions.offsetY)
                     obj.body:setAngle(math.rad(obj.angle))
                 end
             end

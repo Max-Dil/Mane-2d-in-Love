@@ -23,158 +23,68 @@ SOFTWARE.
 ]]
 
 local m = {}
-local base = {}
+local base = require('mane.src.core.methods.base')
 
-function base:setColor(r, g, b, a)
-    self.color = {r or 1, g or 1, b or 1, a or 1}
-end
-
-function base:translate(x, y)
-    self.x, self.y = self.x + x, self.y + y
-end
-
-function base:rotate(angle)
-    self.angle = self.angle + angle
-    self.angle = self.angle % 360
-end
-
-function base:scale(x, y)
-    self.xScale = self.xScale+x
-    self.yScale = self.yScale+y
-end
-
-function base:moveToGroup(newGroup)
-    local group = self.group
-    for i = #group.obj, 1, -1 do
-        if group.obj[i] == self then
-            table.remove(group.obj, i)
-            break
-        end
+function m:newSprite(spriteSheet, x, y)
+    local obj = setmetatable({
+        spriteSheet = spriteSheet,
+        mode = "fill",
+        _type = "newSprite",
+        color = {1,1,1,1},
+        angle = 0,
+        xScale = 1,
+        yScale = 1,
+        x = x or 0,
+        y = y or 0,
+        frame = 1,
+        isVisible = true,
+        group = self,
+        events = {
+            collision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {},
+            key = {},
+            update = {}
+        }
+    },{__index = base})
+    function obj.newAnimation(self, name, options)
+        self.spriteSheet:newAnimation(name, options)
     end
-    table.insert(newGroup.obj, self)
-end
+    function obj.playAnimation(self, name, options)
+        if type(name) == 'table' then
+            options = name
+        end
+        options = options or {}
+        local time = options.time or self.spriteSheet.animations[name].time
+        local rep = options.time or self.spriteSheet.animations[name].rep
+        local count = options.count or self.spriteSheet.animations[name].count
+        local start = options.start or self.spriteSheet.animations[name].start
+        local nameTimer = options.nameTimer or self.spriteSheet.animations[name].nameTimer
 
-function base:remove()
-    local group = self.group
-    self:removeBody()
-    if #self.events.touch >= 1 then
-        for i = #mane.core.click.running, 1, -1 do
-            if mane.core.click.running[i] == self then
-                table.remove(mane.core.click.running, i)
-                break
+        local origStart = start
+        local _rep = (count + 1) * rep
+        self.spriteSheet.animations[name].timer = mane.timer.new(0, function ()
+            self.frame = start
+            start = start + 1
+            if start > origStart + count then
+                start = origStart
             end
-        end
-        for i = #mane.core.click.focus, 1, -1 do
-            if mane.core.click.focus[i] == self then
-                table.remove(mane.core.click.focus, i)
-                break
-            end
-        end
+            self.spriteSheet.animations[name].timer:setTime(time)
+        end, _rep, nameTimer)
     end
-    if #self.events.key >= 1 then
-        for i = #mane.core.key.running, 1, -1 do
-            if mane.core.key.running[i] == self then
-                table.remove(mane.core.key.running, i)
-                break
-            end
+    function obj.stopAnimation(self, name, delay)
+        local function stop()
+            self.spriteSheet.animations[name].timer:cancel()
         end
-    end
-    if #self.events.update >= 1 then
-        for i = #mane.core.update.running, 1, -1 do
-            if mane.core.update.running[i] == self then
-                table.remove(mane.core.update.running, i)
-                break
-            end
-        end
-    end
-    for i = #group.obj, 1, -1 do
-        if group.obj[i] == self then
-            table.remove(group.obj, i)
-            break
-        end
-    end
-end
-
-function base:removeEvent(nameEvent, listener, ...)
-    local table = {...}
-    if nameEvent == "key" then
-        mane.core.key.remove(self, listener)
-    elseif nameEvent == "touch" then
-        mane.core.click.remove(self, listener)
-    elseif nameEvent == "collision" then
-        for i = #self.events.collision, 1, -1 do
-            if self.events.collision[i] == listener then
-                table.remove(self.events.collision, i)
-                break
-            end
-        end
-    elseif nameEvent == "update" then
-        mane.core.update.remove(self, listener)
-    elseif nameEvent == "postCollision" then
-        table[1]:removePostCollision(self, listener)
-    elseif nameEvent == "preCollision" then
-        table[1]:removePreCollision(self, listener)
-    end
-end
-
-function base:addEvent(nameEvent, listener, ...)
-    local table = {...}
-    if nameEvent == "key" then
-        mane.core.key.new(self, listener)
-    elseif nameEvent == "touch" then
-        mane.core.click.new(self, listener)
-    elseif nameEvent == "collision" then
-        if #table < 1 then
-            self.world:addCollision(self, listener)
+        if delay then
+            mane.timer.new(delay, stop)
         else
-            table[1]:addCollision(self, listener)
-        end
-    elseif nameEvent == "update" then
-        mane.core.update.new(self, listener)
-    elseif nameEvent == "postCollision" then
-        if #table < 1 then
-            self.world:addPostCollision(self, listener)
-        else
-            table[1]:addPostCollision(self, listener)
-        end
-    elseif nameEvent == "preCollision" then
-        if #table < 1 then
-            self.world:addPreCollision(self, listener)
-        else
-            table[1]:addPreCollision(self, listener)
+            stop()
         end
     end
-end
-
-function base:removeBody()
-    if self.fixture then
-        self.fixture:destroy()
-    end
-    self.fixture = nil
-    self.body = nil
-    self.shape = nil
-end
-
-function base:toBack()
-    local group = self.group
-    for i = #group.obj, 1, -1 do
-        if group.obj[i] == self then
-            table.remove(group.obj, i)
-            break
-        end
-    end
-    table.insert(group.obj, 1, self)
-end
-
-function base:toFront()
-    local group = self.group
-    for i = #group.obj, 1, -1 do
-        if group.obj[i] == self then
-            table.remove(group.obj, i)
-            break
-        end
-    end
-    table.insert(group.obj, self)
+    table.insert(self.obj, obj)
+    return obj
 end
 
 function m:newParticle(image, buffer, x, y)

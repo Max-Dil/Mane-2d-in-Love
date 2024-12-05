@@ -48,7 +48,7 @@ function timer:setTime(time)
     self._time = time
 end
 
-m.new = function (time, listener, rep)
+m.new = function (time, listener, rep, name)
     if type(listener) == "number" then
         listener, rep = rep, listener
     end
@@ -57,7 +57,8 @@ m.new = function (time, listener, rep)
         rep = rep or 1,
         listener = listener,
         _time = time,
-        on = true
+        on = true,
+        name = name
     }
     , {__index = timer})
     table.insert(running, obj)
@@ -76,6 +77,51 @@ m.resume = function(timer)
     timer.on = true
 end
 
+m.resumeAll = function(name)
+    for i = #running, 1, -1 do
+        if running[i] then
+            if name then
+                if name == running[i].name then
+                    running[i].on = true
+                end
+            else
+                running[i].on = true
+            end
+        end
+    end
+end
+
+m.pauseAll = function(name)
+    for i = #running, 1, -1 do
+        if running[i] then
+            if name then
+                if name == running[i].name then
+                    running[i].on = false
+                end
+            else
+                running[i].on = false
+            end
+        end
+    end
+end
+
+m.cancelAll = function(name)
+    for i = #running, 1, -1 do
+        if running[i] then
+            if name then
+                if name == running[i].name then
+                    running[i]:cancel()
+                end
+            else
+                running[i]:cancel()
+            end
+        end
+    end
+    if not name then
+        running = {}
+    end
+end
+
 function m.update(dt)
     for i = #running, 1, -1 do
         if not running[i] then
@@ -84,12 +130,16 @@ function m.update(dt)
         if running[i].on then
             running[i].time = running[i].time - (dt * 1000)
             if running[i].time <= 0 then
-                running[i].listener()
-                if running[i].rep == 1 then
-                    running[i]:cancel()
+                running[i].listener(dt)
+                if running[i] then
+                    if running[i].rep == 1 then
+                        running[i]:cancel()
+                    else
+                        running[i].rep = running[i].rep - 1
+                        running[i].time = running[i]._time
+                    end
                 else
-                    running[i].rep = running[i].rep - 1
-                    running[i].time = running[i]._time
+                    table.remove(running, i)
                 end
             end
         end

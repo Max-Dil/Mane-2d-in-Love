@@ -73,6 +73,18 @@ function love.mousemoved(x, y, dx, dy)
 	mane.core.click.mousemoved(x, y, dx, dy)
 end
 
+function love.touchreleased(id, x, y, dx, dy, pressure)
+	mane.core.click.touchreleased(id, x, y, dx, dy, pressure)
+end
+
+function love.touchpressed(id, x, y, dx, dy, pressure)
+	mane.core.click.touchpressed(id, x, y, dx, dy, pressure)
+end
+
+function love.touchmoved(id, x, y, dx, dy, pressure)
+	mane.core.click.touchmoved(id, x, y, dx, dy, pressure)
+end
+
 function love.run()
     love.load(love.arg.parseGameArguments(arg), arg)
 	love.timer.step()

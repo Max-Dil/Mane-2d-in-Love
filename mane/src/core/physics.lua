@@ -26,11 +26,20 @@ local m = {}
 m.worlds = {}
 
 local worldClass = {}
+local physicsMethods = require('mane.src.core.methods.physics')
 
 function worldClass:addBody(obj, bodyType, options)
-    obj:removeBody()
+    for key, value in pairs(physicsMethods) do
+        obj[key] = value
+    end
+
+    if self.fixture then
+        self.fixture:destroy()
+    end
 
     if options then
+        options.offsetX = options.offsetX or 0
+        options.offsetY = options.offsetY or 0
         if options.shape == "rect" then
             if not (options.width or options.height) then
                 error("addBody no width or height is options",2)
@@ -59,7 +68,7 @@ function worldClass:addBody(obj, bodyType, options)
         end
     else
 
-        options = {}
+        options = {offsetX = 0, offsetY = 0}
         if obj._type == "newRect" or obj._type == "newContainer" then
             obj.shape = love.physics.newRectangleShape(obj.width, obj.height)
             options.width, options.height = obj.width, obj.height
@@ -78,7 +87,7 @@ function worldClass:addBody(obj, bodyType, options)
             options.points = obj.points
         end
     end
-    obj.bodyOptions = options or {}
+    obj.bodyOptions = options or {offsetX = 0, offsetY = 0}
 
     obj.body = love.physics.newBody(self.world, obj.x, obj.y, bodyType or "dynamic")
     obj.oldBodyX, obj.oldBodyY = obj.x, obj.y

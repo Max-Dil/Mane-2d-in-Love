@@ -126,21 +126,37 @@ function m.remove(obj, listener)
     end
 end
 
-function m.mousepressed(x, y, button, isTouch)
+local function pressed(_device, ...)
+    local x, y, button, isTouch
+    local id, dx, dy, pressure
+
+    if _device == 'windows' then
+        local params = {...}
+        x, y, button, isTouch = params[1], params[2], params[3], params[4]
+    elseif _device == 'android' then
+        local params = {...}
+        id, x, y, dx, dy, pressure = params[1], params[2], params[3], params[4], params[5], params[6]
+    end
+
     local function call_func(obj)
         if not obj.isTouch then
             table.insert(m.focus, obj)
         end
         obj.isTouch = true
         for i2 = 1, #obj.events.touch, 1 do
-            local result = obj.events.touch[i2]({
+            local resultTable = {
                 phase = "began",
                 target = obj,
                 x = x,
                 y = y,
-                button = button,
-                isTouch = isTouch
-            })
+            }
+            if _device == 'windows' then
+                resultTable.button = button
+                resultTable.isTouch = isTouch
+            elseif _device == 'android' then
+                resultTable.id, resultTable.dx, resultTable.dy, resultTable.pressure = id, dx, dy, pressure
+            end
+            local result = obj.events.touch[i2](resultTable)
             if result then
                 return true
             end
@@ -249,21 +265,46 @@ function m.mousepressed(x, y, button, isTouch)
     end
 end
 
-function m.mousereleased(x, y, button, isTouch)
+function m.mousepressed(x, y, button, isTouch)
+    pressed('windows', x, y, button, isTouch)
+end
+
+function m.touchpressed(id, x, y, dx, dy, pressure)
+    pressed('android', id, x, y, dx, dy, pressure)
+end
+
+local function relesed(_device, ...)
+    local x, y, button, isTouch
+
+    local id, dx, dy, pressure
+
+    if _device == 'windows' then
+        local params = {...}
+        x, y, button, isTouch = params[1], params[2], params[3], params[4]
+    elseif _device == 'android' then
+        local params = {...}
+        id, x, y, dx, dy, pressure = params[1], params[2], params[3], params[4], params[5], params[6]
+    end
+
     for i = #m.focus, 1, -1 do
         local obj = m.focus[i]
         if obj.isTouch then
             obj.isTouch = false
             local result
             for i2 = 1, #obj.events.touch, 1 do
-                local result2 = obj.events.touch[i2]({
+                local resultTable = {
                     phase = "ended",
                     target = obj,
                     x = x,
                     y = y,
-                    button = button,
-                    isTouch = isTouch
-                })
+                }
+                if _device == 'windows' then
+                    resultTable.button = button
+                    resultTable.isTouch = isTouch
+                elseif _device == 'android' then
+                    resultTable.id, resultTable.dx, resultTable.dy, resultTable.pressure = id, dx, dy, pressure
+                end
+                local result2 = obj.events.touch[i2](resultTable)
                 if result2 then
                     result = true
                     break
@@ -277,13 +318,31 @@ function m.mousereleased(x, y, button, isTouch)
     end
 end
 
-function m.mousemoved(x, y, dx, dy)
+function m.mousereleased(x, y, button, isTouch)
+    relesed('windows', x, y, button, isTouch)
+end
+
+function m.touchreleased(id, x, y, dx, dy, pressure)
+    relesed('android', id, x, y, dx, dy, pressure)
+end
+
+local function moved(_device, ...)
+    local x, y, dx, dy
+    local id, pressure
+    if _device == 'windows' then
+        local params = {...}
+        x, y, dx, dy = params[1], params[2], params[3], params[4]
+    elseif _device == 'android' then
+        local params = {...}
+        id, x, y, dx, dy, pressure = params[1], params[2], params[3], params[4], params[5], params[6]
+    end
+
     for i = #m.focus, 1, -1 do
         local obj = m.focus[i]
         if obj.isTouch then
             local result
             for i2 = 1, #obj.events.touch, 1 do
-                local result2 = obj.events.touch[i2]({
+                local resultTable = {
                     phase = "moved",
                     target = obj,
                     x = x,
@@ -291,7 +350,11 @@ function m.mousemoved(x, y, dx, dy)
                     dx = dx,
                     dy = dy,
                     button = 0
-                })
+                }
+                if _device == 'android' then
+                    resultTable.id, resultTable.pressure = id, pressure
+                end
+                local result2 = obj.events.touch[i2](resultTable)
                 if result2 then
                     result = true
                     break
@@ -302,6 +365,14 @@ function m.mousemoved(x, y, dx, dy)
             end
         end
     end
+end
+
+function m.mousemoved(x, y, dx, dy)
+    moved('windows', x, y, dx, dy)
+end
+
+function m.touchmoved(id, x, y, dx, dy, pressure)
+    moved('windows', id, x, y, dx, dy, pressure)
 end
 
 mane.core.click = m

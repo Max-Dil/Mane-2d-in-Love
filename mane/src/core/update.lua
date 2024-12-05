@@ -44,6 +44,10 @@ end
 m.update = function (dt)
     for i = #m.running, 1, -1 do
         local obj = m.running[i]
+        if not obj then
+            table.remove(m.running, i)
+            return true
+        end
         for i2 = 1, #obj.events.update, 1 do
             obj.events.update[i2](
                 {

@@ -151,4 +151,50 @@ function m.getQuad(axis_x,axis_y,vert_x,vert_y)
 	end
 end
 
+m.newSpriteSheet = function (image, frameWidth, frameHeight, numFrames)
+    if not mane.images[image] then
+        mane.images[image] = love.graphics.newImage(image)
+    end
+    image = mane.images[image]
+    local sprites = {}
+    for i = 1, numFrames do
+        local x = (i - 1) % 16 * frameWidth
+        local y = math.floor((i - 1) / 16) * frameHeight
+        local quad = love.graphics.newQuad(x, y, frameWidth, frameHeight, image:getWidth(), image:getHeight())
+        sprites[i] = quad
+    end
+
+    local base = {}
+
+    function base:newAnimation(name, options)
+        local frameStart, frameCount, time, rep = options.start, options.count, options.time, options.rep
+        self.animations[name] = {
+            start = frameStart or 1,
+            count = frameCount or 1,
+            time = time or 0,
+            rep = rep or 1,
+            nameTimer = options.nameTimer
+        }
+    end
+
+    local obj = setmetatable(
+        {
+            frameWidth = frameWidth,
+            frameHeight = frameHeight,
+            numFrames = numFrames,
+            animations = {},
+            image = image,
+            sprites = sprites
+        },
+    {__index = base})
+    obj.animations['default'] = {
+        frameStart = 1,
+        frameCount = #sprites - 1,
+        time = 500,
+        rep = 1
+    }
+
+    return obj
+end
+
 mane.graphics = m

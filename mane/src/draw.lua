@@ -24,6 +24,12 @@ SOFTWARE.
 
 local m = {}
 
+m.newSprite = function (obj)
+    local color = obj.color or {1,1,1,1}
+    love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
+    love.graphics.draw(obj.spriteSheet.image, obj.spriteSheet.sprites[obj.frame], obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale)
+end
+
 m.newParticle = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
