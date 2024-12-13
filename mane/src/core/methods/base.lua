@@ -57,8 +57,8 @@ end
 function base:remove()
     local group = self.group
 
-    if self.fixture then
-        self.fixture:destroy()
+    if self.removeBody then
+        self:removeBody()
     end
     if #self.events.touch >= 1 then
         for i = #mane.core.click.running, 1, -1 do

@@ -47,17 +47,17 @@ m.groupUpdate = function(group, dt)
                         obj.body:setAngle(obj.body:getAngle() + math.rad(obj.angle - obj.oldBodyAngle))
                     end
 
-                    obj.x = obj.body:getX() + obj.bodyOptions.offsetX
-                    obj.y = obj.body:getY() + obj.bodyOptions.offsetY
+                    obj.x = obj.body:getX() - obj.bodyOptions.offsetX
+                    obj.y = obj.body:getY() - obj.bodyOptions.offsetY
                     obj.angle = (obj.body:getAngle() / math.pi) * 180
 
                     obj.oldBodyX = obj.x
                     obj.oldBodyY = obj.y
                     obj.oldBodyAngle = obj.angle
                 else
-                    obj.body:setX(obj.x + obj.bodyOptions.offsetX)
-                    obj.body:setY(obj.y + obj.bodyOptions.offsetY)
-                    obj.body:setAngle(math.rad(obj.angle))
+                    obj.body:setX(obj.x + obj.bodyOptions.offsetX + obj.group.x)
+                    obj.body:setY(obj.y + obj.bodyOptions.offsetY + obj.group.y)
+                    obj.body:setAngle(math.rad(obj.angle) + obj.group.angle)
                 end
             end
         end

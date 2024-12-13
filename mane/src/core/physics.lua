@@ -145,6 +145,22 @@ function worldClass:removePostCollision(obj, listener)
         end
     end
 end
+function worldClass:remove()
+    for i = 1, #m.worlds, 1 do
+        if m.worlds[i] == self then
+            table.remove(m.worlds, i)
+            break
+        end
+    end
+    if self.world then
+        self.world:destroy()
+        self.events = {
+            collision = {},
+            preCollision = {},
+            postCollision = {}
+        }
+    end
+end
 
 m.newWorld = function (gx, gy, sleep)
     local world = setmetatable({
@@ -161,16 +177,21 @@ m.newWorld = function (gx, gy, sleep)
         local obj1 = a:getUserData() or {}
         local obj2 = b:getUserData() or {}
         for i = #world.events.collision, 1, -1 do
+            local result
             for i2 = #world.events.collision[i].events.collision, 1, -1 do
                 if world.events.collision[i] == obj1 or world.events.collision[i] == obj2 then
-                    world.events.collision[i].events.collision[i2](
+                    result = world.events.collision[i].events.collision[i2](
                         {
                             phase = "began",
                             target = obj1,
                             other = obj2
                         }
                     )
+                    
                 end
+            end
+            if result then
+                break
             end
         end
         if mane.physics.globalCollision then
@@ -181,9 +202,10 @@ m.newWorld = function (gx, gy, sleep)
         local obj1 = a:getUserData() or {}
         local obj2 = b:getUserData() or {}
         for i = #world.events.collision, 1, -1 do
+            local result
             for i2 = #world.events.collision[i].events.collision, 1, -1 do
                 if world.events.collision[i] == obj1 or world.events.collision[i] == obj2 then
-                    world.events.collision[i].events.collision[i2](
+                    result = world.events.collision[i].events.collision[i2](
                         {
                             phase = "ended",
                             target = obj1,
@@ -191,6 +213,9 @@ m.newWorld = function (gx, gy, sleep)
                         }
                     )
                 end
+            end
+            if result then
+                break
             end
         end
         if mane.physics.endGlobalCollision then
@@ -221,9 +246,10 @@ m.newWorld = function (gx, gy, sleep)
         local obj1 = a:getUserData() or {}
         local obj2 = b:getUserData() or {}
         for i = #world.events.postCollision, 1, -1 do
+            local result
             for i2 = #world.events.postCollision[i].events.postCollision, 1, -1 do
                 if world.events.postCollision[i] == obj1 or world.events.postCollision[i] == obj2 then
-                    world.events.postCollision[i].events.postCollision[i2](
+                    result = world.events.postCollision[i].events.postCollision[i2](
                         {
                             phase = "post",
                             target = obj1,
@@ -231,6 +257,9 @@ m.newWorld = function (gx, gy, sleep)
                         }
                     )
                 end
+            end
+            if result then
+                break
             end
         end
         if mane.physics.postGlobalCollision then

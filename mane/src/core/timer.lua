@@ -123,6 +123,7 @@ m.cancelAll = function(name)
 end
 
 function m.update(dt)
+    local dt = dt + mane.speed
     for i = #running, 1, -1 do
         if not running[i] then
             table.remove(running, i)

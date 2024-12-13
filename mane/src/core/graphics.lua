@@ -151,15 +151,15 @@ function m.getQuad(axis_x,axis_y,vert_x,vert_y)
 	end
 end
 
-m.newSpriteSheet = function (image, frameWidth, frameHeight, numFrames)
+m.newSpriteSheet = function (image, frameWidth, frameHeight, numFrames, framesPerLine)
     if not mane.images[image] then
         mane.images[image] = love.graphics.newImage(image)
     end
     image = mane.images[image]
     local sprites = {}
     for i = 1, numFrames do
-        local x = (i - 1) % 16 * frameWidth
-        local y = math.floor((i - 1) / 16) * frameHeight
+        local x = (i - 1) % framesPerLine * frameWidth
+        local y = math.floor((i - 1) / framesPerLine) * frameHeight
         local quad = love.graphics.newQuad(x, y, frameWidth, frameHeight, image:getWidth(), image:getHeight())
         sprites[i] = quad
     end
@@ -182,6 +182,7 @@ m.newSpriteSheet = function (image, frameWidth, frameHeight, numFrames)
             frameWidth = frameWidth,
             frameHeight = frameHeight,
             numFrames = numFrames,
+            framesPerLine = framesPerLine,
             animations = {},
             image = image,
             sprites = sprites

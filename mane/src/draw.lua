@@ -54,40 +54,40 @@ m.newContainer = function (container)
             love.graphics.push()
             m[obj._type](obj)
             love.graphics.pop()
-            if mane.display.renderMode == "hybrid" and obj.body and obj.shape then
-                local x, y = obj.body:getPosition()
-                local angle = obj.body:getAngle()
+            -- if mane.display.renderMode == "hybrid" and obj.body and obj.shape then
+            --     local x, y = obj.body:getPosition()
+            --     local angle = obj.body:getAngle()
 
-                love.graphics.push()
-                love.graphics.translate(x, y)
-                love.graphics.rotate(angle)
+            --     love.graphics.push()
+            --     love.graphics.translate(x, y)
+            --     love.graphics.rotate(angle)
 
-                if obj.body:getType() == "static" then
-                    love.graphics.setColor(1,0,0,1)
-                else
-                    if obj.body:isActive() then
-                        love.graphics.setColor(0,1,0,1)
-                    else
-                        love.graphics.setColor(0.5,0.5,0.5,1)
-                    end
-                end
-                if obj.bodyOptions.shape == "rect" then
-                    love.graphics.rectangle("line", 0 - obj.bodyOptions.width/2, 0 - obj.bodyOptions.height/2, obj.bodyOptions.width, obj.bodyOptions.height)
-                elseif obj.bodyOptions.shape == "circle" then
-                    love.graphics.circle('line', 0, 0, obj.bodyOptions.radius)
-                elseif obj.bodyOptions.shape == "chain" then
-                    local points = obj.bodyOptions.points
-                    love.graphics.line(points)
-                elseif obj.bodyOptions.shape == "edge" then
-                    local x1, y1 = obj.bodyOptions.x1, obj.bodyOptions.y1
-                    local x2, y2 = obj.bodyOptions.x2, obj.bodyOptions.y2
-                    love.graphics.line(x1, y1, x2, y2)
-                elseif obj.bodyOptions.shape == "polygon" then
-                    local points = obj.bodyOptions.vertices
-                    love.graphics.polygon("line", points)
-                end
-                love.graphics.pop()
-            end
+            --     if obj.body:getType() == "static" then
+            --         love.graphics.setColor(1,0,0,1)
+            --     else
+            --         if obj.body:isActive() then
+            --             love.graphics.setColor(0,1,0,1)
+            --         else
+            --             love.graphics.setColor(0.5,0.5,0.5,1)
+            --         end
+            --     end
+            --     if obj.bodyOptions.shape == "rect" then
+            --         love.graphics.rectangle("line", 0 - obj.bodyOptions.width/2, 0 - obj.bodyOptions.height/2, obj.bodyOptions.width, obj.bodyOptions.height)
+            --     elseif obj.bodyOptions.shape == "circle" then
+            --         love.graphics.circle('line', 0, 0, obj.bodyOptions.radius)
+            --     elseif obj.bodyOptions.shape == "chain" then
+            --         local points = obj.bodyOptions.points
+            --         love.graphics.line(points)
+            --     elseif obj.bodyOptions.shape == "edge" then
+            --         local x1, y1 = obj.bodyOptions.x1, obj.bodyOptions.y1
+            --         local x2, y2 = obj.bodyOptions.x2, obj.bodyOptions.y2
+            --         love.graphics.line(x1, y1, x2, y2)
+            --     elseif obj.bodyOptions.shape == "polygon" then
+            --         local points = obj.bodyOptions.vertices
+            --         love.graphics.polygon("line", points)
+            --     end
+            --     love.graphics.pop()
+            -- end
         end
     end
     love.graphics.setScissor()
@@ -211,24 +211,27 @@ m.newRect = function (obj)
     love.graphics.rectangle(obj.mode, - obj.width/2,  -obj.height/2, obj.width, obj.height, obj.rx, obj.ry, obj.segments)
 end
 
-m.newGroup = function(group)
-    love.graphics.push()
-    love.graphics.translate(group.x, group.y)
-    love.graphics.rotate(math.rad(group.angle))
-    love.graphics.scale(group.xScale, group.yScale)
+local offsetX, offsetY = 0, 0
+m.newHitboxs = function (group)
+    offsetX, offsetY = offsetX + group.x, offsetY + group.y
     for i = 1, #group.obj, 1 do
         local obj = group.obj[i]
         if obj.isVisible then
-            love.graphics.push()
-            m[obj._type](obj)
-            love.graphics.pop()
-            if mane.display.renderMode == "hybrid" and obj.body and obj.shape then
-                local x, y = obj.body:getPosition()
-                local angle = obj.body:getAngle()
+            if obj._type == 'newGroup' or obj._type == 'newContainer' then
+                love.graphics.push()
+                m.newHitboxs(obj)
+                love.graphics.pop()
+            end
+            if obj.body and obj.shape then
+                local bx, by = obj.body:getPosition()
+                local bAngle = obj.body:getAngle()
+
+                local gAngle = math.rad(group.angle)
+                local transformedAngle = bAngle - gAngle
 
                 love.graphics.push()
-                love.graphics.translate(x, y)
-                love.graphics.rotate(angle)
+                love.graphics.translate(bx + offsetX, by + offsetY)
+                love.graphics.rotate(transformedAngle)
 
                 if obj.body:getType() == "static" then
                     love.graphics.setColor(1,0,0,1)
@@ -258,6 +261,65 @@ m.newGroup = function(group)
             end
         end
     end
+end
+
+m.newGroup = function(group)
+    love.graphics.push()
+    love.graphics.rotate(math.rad(group.angle))
+    love.graphics.translate(group.x, group.y)
+    love.graphics.scale(group.xScale, group.yScale)
+
+    for i = 1, #group.obj, 1 do
+        local obj = group.obj[i]
+        if obj.isVisible then
+            love.graphics.push()
+            m[obj._type](obj)
+            love.graphics.pop()
+
+            -- if mane.display.renderMode == "hybrid" and obj.body and obj.shape then
+            --     local bx, by = obj.body:getPosition()
+            --     local bAngle = obj.body:getAngle()
+
+            --     local gx, gy = group.x, group.y
+            --     local gAngle = math.rad(group.angle)
+            --     local gScaleX, gScaleY = group.xScale, group.yScale
+
+            --     local tx = (bx - gx) / gScaleX
+            --     local ty = (by - gy) / gScaleY
+            --     local transformedAngle = bAngle - gAngle
+
+            --     love.graphics.push()
+            --     love.graphics.translate(tx, ty)
+            --     love.graphics.rotate(transformedAngle)
+
+            --     if obj.body:getType() == "static" then
+            --         love.graphics.setColor(1,0,0,1)
+            --     else
+            --         if obj.body:isActive() then
+            --             love.graphics.setColor(0,1,0,1)
+            --         else
+            --             love.graphics.setColor(0.5,0.5,0.5,1)
+            --         end
+            --     end
+            --     if obj.bodyOptions.shape == "rect" then
+            --         love.graphics.rectangle("line", 0 - obj.bodyOptions.width/2, 0 - obj.bodyOptions.height/2, obj.bodyOptions.width, obj.bodyOptions.height)
+            --     elseif obj.bodyOptions.shape == "circle" then
+            --         love.graphics.circle('line', 0, 0, obj.bodyOptions.radius)
+            --     elseif obj.bodyOptions.shape == "chain" then
+            --         local points = obj.bodyOptions.points
+            --         love.graphics.line(points)
+            --     elseif obj.bodyOptions.shape == "edge" then
+            --         local x1, y1 = obj.bodyOptions.x1, obj.bodyOptions.y1
+            --         local x2, y2 = obj.bodyOptions.x2, obj.bodyOptions.y2
+            --         love.graphics.line(x1, y1, x2, y2)
+            --     elseif obj.bodyOptions.shape == "polygon" then
+            --         local points = obj.bodyOptions.vertices
+            --         love.graphics.polygon("line", points)
+            --     end
+            --     love.graphics.pop()
+            -- end
+        end
+    end
     love.graphics.pop()
 end
 
@@ -265,5 +327,9 @@ return function ()
     if mane.display.game.isVisible then
         love.graphics.setWireframe( mane.display.wireframe )
         m.newGroup(mane.display.game)
+        if mane.display.renderMode == "hybrid" then
+            offsetX, offsetY = 0, 0
+            m.newHitboxs(mane.display.game)
+        end
     end
 end
