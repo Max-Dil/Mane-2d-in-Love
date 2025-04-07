@@ -187,7 +187,6 @@ m.newWorld = function (gx, gy, sleep)
                             other = obj2
                         }
                     )
-                    
                 end
             end
             if result then

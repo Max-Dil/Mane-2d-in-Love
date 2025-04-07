@@ -39,10 +39,12 @@ function m.remove(obj, listener)
             break
         end
     end
-    for i = m.running, 1, -1 do
-        if m.running[i] == obj then
-            table.remove(m.running, i)
-            break
+    if #obj.events.touch == 0 then
+        for i = #m.running, 1, -1 do
+            if m.running[i] == obj then
+                table.remove(m.running, i)
+                break
+            end
         end
     end
 end

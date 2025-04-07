@@ -124,6 +124,14 @@ function m.remove(obj, listener)
             break
         end
     end
+    if #obj.events.touch == 0 then
+        for i = #m.running, 1, -1 do
+            if m.running[i] == obj then
+                table.remove(m.running, i)
+                break
+            end
+        end
+    end
 end
 
 local function pressed(_device, ...)
@@ -143,7 +151,7 @@ local function pressed(_device, ...)
             table.insert(m.focus, obj)
         end
         obj.isTouch = true
-        for i2 = 1, #obj.events.touch, 1 do
+        for i2 = #obj.events.touch, 1, -1 do
             local resultTable = {
                 phase = "began",
                 target = obj,
@@ -162,7 +170,7 @@ local function pressed(_device, ...)
             end
         end
     end
-    for i = 1, #m.running, 1 do
+    for i = #m.running, 1, -1 do
         local obj = m.running[i]
         if obj._type == "newRect" then
             if clickCheck.rect(obj, x, y) then
@@ -247,6 +255,23 @@ local function pressed(_device, ...)
             local y1 = obj.y - textHeight / 2
             local x2 = obj.x + textWidth / 2
             local y2 = obj.y + textHeight / 2
+            if x >= x1 and x <= x2 and y >= y1 and y <= y2 then
+                local result = call_func(obj)
+                if result then
+                    break
+                end
+            end
+        elseif obj._type == "newSprite" then
+            local frameWidth = obj.spriteSheet.frameWidth
+            local frameHeight = obj.spriteSheet.frameHeight
+            local scaledWidth = frameWidth * obj.xScale
+            local scaledHeight = frameHeight * obj.yScale
+
+            local x1 = obj.x - scaledWidth / 2
+            local y1 = obj.y - scaledHeight / 2
+            local x2 = obj.x + scaledWidth / 2
+            local y2 = obj.y + scaledHeight / 2
+
             if x >= x1 and x <= x2 and y >= y1 and y <= y2 then
                 local result = call_func(obj)
                 if result then
