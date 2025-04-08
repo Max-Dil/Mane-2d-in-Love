@@ -44,6 +44,18 @@ function base:setSleepingAllowed(allowed)
     self.body:setSleepingAllowed(allowed)
 end
 
+function base:setDensity(density)
+    self.fixture:setDensity(density)
+end
+
+function base:setRestitution(restruction)
+    self.fixture:setRestitution(restruction)
+end
+
+function base:setFriction(friction)
+    self.fixture:setFriction(friction)
+end
+
 function base:setMassData(x, y, mass, inertia)
     self.body:setMassData(x, y, mass, inertia)
 end

@@ -49,20 +49,24 @@ function m.remove(obj, listener)
     end
 end
 
-
 m.keypressed = function (key, scancode, isrepeat)
     for i = #m.running, 1, -1 do
         local obj = m.running[i]
-        for i2 = 1, #obj.events.key, 1 do
-            obj.events.key[i2](
-                {
-                    phase = "began",
-                    key = key,
-                    scancode = scancode,
-                    isrepeat = isrepeat,
-                    target = obj
-                }
-            )
+        if obj.group.isVisible then
+            for i2 = 1, #obj.events.key, 1 do
+                local result = obj.events.key[i2](
+                    {
+                        phase = "began",
+                        key = key,
+                        scancode = scancode,
+                        isrepeat = isrepeat,
+                        target = obj
+                    }
+                )
+                if result == true then
+                    return
+                end
+            end
         end
     end
 end
@@ -70,14 +74,19 @@ end
 m.keyreleased = function (key)
     for i = #m.running, 1, -1 do
         local obj = m.running[i]
-        for i2 = 1, #obj.events.key, 1 do
-            obj.events.key[i2](
-                {
-                    phase = "ended",
-                    key = key,
-                    target = obj
-                }
-            )
+        if obj.group.isVisible then
+            for i2 = 1, #obj.events.key, 1 do
+                local result = obj.events.key[i2](
+                    {
+                        phase = "ended",
+                        key = key,
+                        target = obj
+                    }
+                )
+                if result == true then
+                    return
+                end
+            end
         end
     end
 end
