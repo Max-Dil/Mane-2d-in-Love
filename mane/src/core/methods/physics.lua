@@ -27,10 +27,41 @@ local base = {}
 function base:removeBody()
     if self.fixture then
         self.fixture:destroy()
+        self.fixture = nil
     end
-    self.fixture = nil
-    self.body = nil
+    if self.body then
+        self.body:destroy()
+        self.body = nil
+    end
     self.shape = nil
+
+    if #self.events.collision > 0 then
+        for i = #self.world.events.collision, 1, -1 do
+            if self.world.events.collision[i] == self then
+                table.remove(self.world.events.collision, i)
+                break
+            end
+        end
+        self.events.collision = {}
+    end
+    if #self.events.preCollision > 0 then
+        for i = self.world.events.preCollision, 1, -1 do
+            if self.world.events.preCollision[i] == self then
+                table.remove(self.world.events.preCollision, i)
+                break
+            end
+        end
+        self.events.preCollision = {}
+    end
+    if #self.events.postCollision > 0 then
+        for i = self.world.events.postCollision, 1, -1 do
+            if self.world.events.postCollision[i] == self then
+                table.remove(self.world.events.postCollision, i)
+                break
+            end
+        end
+        self.events.postCollision = {}
+    end
     for key, value in pairs(base) do
         self[key] = nil
     end

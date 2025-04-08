@@ -118,10 +118,12 @@ function worldClass:removePreCollision(obj, listener)
             break
         end
     end
-    for i = self.events.preCollision, 1, -1 do
-        if self.events.preCollision[i] == obj then
-            table.remove(self.events.preCollision, i)
-            break
+    if #obj.events.preCollision < 0 then
+        for i = self.events.preCollision, 1, -1 do
+            if self.events.preCollision[i] == obj then
+                table.remove(self.events.preCollision, i)
+                break
+            end
         end
     end
 end
@@ -138,10 +140,12 @@ function worldClass:removePostCollision(obj, listener)
             break
         end
     end
-    for i = self.events.postCollision, 1, -1 do
-        if self.events.postCollision[i] == obj then
-            table.remove(self.events.postCollision, i)
-            break
+    if #obj.events.postCollision < 0 then
+        for i = self.events.postCollision, 1, -1 do
+            if self.events.postCollision[i] == obj then
+                table.remove(self.events.postCollision, i)
+                break
+            end
         end
     end
 end

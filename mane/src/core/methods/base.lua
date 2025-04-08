@@ -99,7 +99,7 @@ function base:remove()
 end
 
 function base:removeEvent(nameEvent, listener, ...)
-    local table = {...}
+    local table2 = {...}
     if nameEvent == "key" then
         mane.core.key.remove(self, listener)
     elseif nameEvent == "touch" then
@@ -111,12 +111,20 @@ function base:removeEvent(nameEvent, listener, ...)
                 break
             end
         end
+        if #self.events.collision == 0 then
+            for i = #self.world.events.collision, 1, -1 do
+                if self.world.events.collision[i] == self then
+                    table.remove(self.world.events.collision, i)
+                    break
+                end
+            end
+        end
     elseif nameEvent == "update" then
         mane.core.update.remove(self, listener)
     elseif nameEvent == "postCollision" then
-        table[1]:removePostCollision(self, listener)
+        table2[1]:removePostCollision(self, listener)
     elseif nameEvent == "preCollision" then
-        table[1]:removePreCollision(self, listener)
+        table2[1]:removePreCollision(self, listener)
     end
 end
 
