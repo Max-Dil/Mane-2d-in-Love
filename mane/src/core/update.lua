@@ -56,13 +56,15 @@ m.update = function (dt)
             table.remove(m.running, i)
             return true
         end
-        for i2 = 1, #obj.events.update, 1 do
-            obj.events.update[i2](
-                {
-                    dt = dt,
-                    target = obj
-                }
-            )
+        if obj.group.isVisible then
+            for i2 = 1, #obj.events.update, 1 do
+                obj.events.update[i2](
+                    {
+                        dt = dt,
+                        target = obj
+                    }
+                )
+            end
         end
     end
 end

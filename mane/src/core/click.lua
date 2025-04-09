@@ -172,120 +172,124 @@ local function pressed(_device, ...)
     end
     for i = #m.running, 1, -1 do
         local obj = m.running[i]
-        if obj._type == "newRect" then
-            if clickCheck.rect(obj, x, y) then
-                local result = call_func(obj)
-                if result then
-                    break
-                end
-            end
-        elseif obj._type == "newCircle" then
-            if love.distance(x, y, obj.x, obj.y) < obj.radius then
-                local result = call_func(obj)
-                if result then
-                    break
-                end
-            end
-        elseif obj._type == "newArc" then
-            if clickCheck.arc(obj, x, y) then
-                local result = call_func(obj)
-                if result then
-                    break
-                end
-            end
-        elseif  obj._type == "newImage" or obj._type == "newLayerImage" then
-            local image = obj._type == "newImage" and obj.image or obj.image[obj.layerindex]
-            local imageWidth, imageHeight = obj.image:getDimensions()
-            local x1 = obj.x - imageWidth * obj.xScale / 2
-            local y1 = obj.y - imageHeight * obj.yScale / 2
-            local x2 = obj.x + imageWidth * obj.xScale / 2
-            local y2 = obj.y + imageHeight * obj.yScale / 2
-            if x >= x1 and x <= x2 and y >= y1 and y <= y2 then
-                local result = call_func(obj)
-                if result then
-                    break
-                end
-            end
-        elseif obj._type == "newEllipse" then
-            if math.pow((x - obj.x) / obj.radiusx, 2) + math.pow((y - obj.y) / obj.radiusy, 2) <= 1 then
-                local result = call_func(obj)
-                if result then
-                    break
-                end
-            end
-        elseif obj._type == "newLine" then
-            if clickCheck.isPointOnLine(obj, x, y) then
-                local result = call_func(obj)
-                if result then
-                    break
-                end
-            end
-        elseif obj._type == "newPoints" then
-            for j = 1, #obj.points, 2 do
-                local width, height = mane.graphics.getPointsDimensions(obj.points)
-                width, height = width*1.5, height*1.5
-                local pointX = (obj.x - width) + obj.points[j]
-                local pointY = (obj.y - height) + obj.points[j + 1]
-                if love.distance(x, y, pointX, pointY) <= obj.size / 2 then
+        if obj.group.isVisible then
+            if obj._type == "newRect" then
+                if clickCheck.rect(obj, x, y) then
                     local result = call_func(obj)
                     if result then
-                        return true
+                        break
                     end
-                    break
+                end
+            elseif obj._type == "newCircle" then
+                if love.distance(x, y, obj.x, obj.y) < obj.radius then
+                    local result = call_func(obj)
+                    if result then
+                        break
+                    end
+                end
+            elseif obj._type == "newArc" then
+                if clickCheck.arc(obj, x, y) then
+                    local result = call_func(obj)
+                    if result then
+                        break
+                    end
+                end
+            elseif  obj._type == "newImage" or obj._type == "newLayerImage" then
+                local image = obj._type == "newImage" and obj.image or obj.image[obj.layerindex]
+                local imageWidth, imageHeight = obj.image:getDimensions()
+                local x1 = obj.x - imageWidth * obj.xScale / 2
+                local y1 = obj.y - imageHeight * obj.yScale / 2
+                local x2 = obj.x + imageWidth * obj.xScale / 2
+                local y2 = obj.y + imageHeight * obj.yScale / 2
+                if x >= x1 and x <= x2 and y >= y1 and y <= y2 then
+                    local result = call_func(obj)
+                    if result then
+                        break
+                    end
+                end
+            elseif obj._type == "newEllipse" then
+                if math.pow((x - obj.x) / obj.radiusx, 2) + math.pow((y - obj.y) / obj.radiusy, 2) <= 1 then
+                    local result = call_func(obj)
+                    if result then
+                        break
+                    end
+                end
+            elseif obj._type == "newLine" then
+                if clickCheck.isPointOnLine(obj, x, y) then
+                    local result = call_func(obj)
+                    if result then
+                        break
+                    end
+                end
+            elseif obj._type == "newPoints" then
+                for j = 1, #obj.points, 2 do
+                    local width, height = mane.graphics.getPointsDimensions(obj.points)
+                    width, height = width*1.5, height*1.5
+                    local pointX = (obj.x - width) + obj.points[j]
+                    local pointY = (obj.y - height) + obj.points[j + 1]
+                    if love.distance(x, y, pointX, pointY) <= obj.size / 2 then
+                        local result = call_func(obj)
+                        if result then
+                            return true
+                        end
+                        break
+                    end
+                end
+            elseif obj._type == "newPolygon" then
+                if mane.graphics.pointInPolygon(obj.vertices, x, y, obj) then
+                    local result = call_func(obj)
+                    if result then
+                        break
+                    end
+                end
+            elseif obj._type == "newPrint" or obj._type == "newPrintf" then
+                local currentY = obj.y
+                local text = obj.text
+                if type(obj.text) == "table" then
+                    text = ""
+                    for _, line in ipairs(obj.text) do
+                        text = text .. line.text
+                    end
+                end
+                local textWidth, textHeight = obj.font:getWidth(text), obj.font:getHeight(text)
+                local x1 = obj.x - textWidth / 2
+                local y1 = obj.y - textHeight / 2
+                local x2 = obj.x + textWidth / 2
+                local y2 = obj.y + textHeight / 2
+                if x >= x1 and x <= x2 and y >= y1 and y <= y2 then
+                    local result = call_func(obj)
+                    if result then
+                        break
+                    end
+                end
+            elseif obj._type == "newSprite" then
+                local frameWidth = obj.spriteSheet.frameWidth
+                local frameHeight = obj.spriteSheet.frameHeight
+                local scaledWidth = frameWidth * obj.xScale
+                local scaledHeight = frameHeight * obj.yScale
+    
+                local x1 = obj.x - scaledWidth / 2
+                local y1 = obj.y - scaledHeight / 2
+                local x2 = obj.x + scaledWidth / 2
+                local y2 = obj.y + scaledHeight / 2
+    
+                if x >= x1 and x <= x2 and y >= y1 and y <= y2 then
+                    local result = call_func(obj)
+                    if result then
+                        break
+                    end
+                end
+            elseif obj._type == "newContainer" then
+                if x > (obj.x - obj.width / 2) and x < (obj.x + obj.width / 2) and
+                   y > (obj.y - obj.height / 2) and y < (obj.y + obj.height / 2) then
+                    local result = call_func(obj)
+                    if result then
+                        break
+                    end
                 end
             end
-        elseif obj._type == "newPolygon" then
-            if mane.graphics.pointInPolygon(obj.vertices, x, y, obj) then
-                local result = call_func(obj)
-                if result then
-                    break
-                end
-            end
-        elseif obj._type == "newPrint" or obj._type == "newPrintf" then
-            local currentY = obj.y
-            local text = obj.text
-            if type(obj.text) == "table" then
-                text = ""
-                for _, line in ipairs(obj.text) do
-                    text = text .. line.text
-                end
-            end
-            local textWidth, textHeight = obj.font:getWidth(text), obj.font:getHeight(text)
-            local x1 = obj.x - textWidth / 2
-            local y1 = obj.y - textHeight / 2
-            local x2 = obj.x + textWidth / 2
-            local y2 = obj.y + textHeight / 2
-            if x >= x1 and x <= x2 and y >= y1 and y <= y2 then
-                local result = call_func(obj)
-                if result then
-                    break
-                end
-            end
-        elseif obj._type == "newSprite" then
-            local frameWidth = obj.spriteSheet.frameWidth
-            local frameHeight = obj.spriteSheet.frameHeight
-            local scaledWidth = frameWidth * obj.xScale
-            local scaledHeight = frameHeight * obj.yScale
-
-            local x1 = obj.x - scaledWidth / 2
-            local y1 = obj.y - scaledHeight / 2
-            local x2 = obj.x + scaledWidth / 2
-            local y2 = obj.y + scaledHeight / 2
-
-            if x >= x1 and x <= x2 and y >= y1 and y <= y2 then
-                local result = call_func(obj)
-                if result then
-                    break
-                end
-            end
-        elseif obj._type == "newContainer" then
-            if x > (obj.x - obj.width / 2) and x < (obj.x + obj.width / 2) and
-               y > (obj.y - obj.height / 2) and y < (obj.y + obj.height / 2) then
-                local result = call_func(obj)
-                if result then
-                    break
-                end
-            end
+        else
+            obj.isTouch = false
         end
     end
 end
@@ -313,7 +317,7 @@ local function relesed(_device, ...)
 
     for i = #m.focus, 1, -1 do
         local obj = m.focus[i]
-        if obj.isTouch then
+        if obj.isTouch and obj.group.isVisible then
             obj.isTouch = false
             local result
             for i2 = 1, #obj.events.touch, 1 do
@@ -339,6 +343,8 @@ local function relesed(_device, ...)
             if result then
                 return true
             end
+        else
+            obj.isTouch = false
         end
     end
 end
@@ -364,7 +370,7 @@ local function moved(_device, ...)
 
     for i = #m.focus, 1, -1 do
         local obj = m.focus[i]
-        if obj.isTouch then
+        if obj.isTouch and obj.group.isVisible then
             local result
             for i2 = 1, #obj.events.touch, 1 do
                 local resultTable = {
@@ -388,6 +394,8 @@ local function moved(_device, ...)
             if result then
                 return true
             end
+        else
+            obj.isTouch = false
         end
     end
 end

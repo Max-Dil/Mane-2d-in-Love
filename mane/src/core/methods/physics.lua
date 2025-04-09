@@ -25,12 +25,49 @@ SOFTWARE.
 local base = {}
 
 function base:removeBody()
+    -- Уничтожаем физические объекты, если они существуют
     if self.fixture then
         self.fixture:destroy()
+        self.fixture = nil
     end
-    self.fixture = nil
-    self.body = nil
+    if self.body then
+        self.body:destroy()
+        self.body = nil
+    end
     self.shape = nil
+
+    if self.world then
+        if self.events and self.events.collision and #self.events.collision > 0 then
+            for i = #self.world.events.collision, 1, -1 do
+                if self.world.events.collision[i] == self then
+                    table.remove(self.world.events.collision, i)
+                    break
+                end
+            end
+            self.events.collision = {}
+        end
+
+        if self.events and self.events.preCollision and #self.events.preCollision > 0 then
+            for i = #self.world.events.preCollision, 1, -1 do
+                if self.world.events.preCollision[i] == self then
+                    table.remove(self.world.events.preCollision, i)
+                    break
+                end
+            end
+            self.events.preCollision = {}
+        end
+
+        if self.events and self.events.postCollision and #self.events.postCollision > 0 then
+            for i = #self.world.events.postCollision, 1, -1 do
+                if self.world.events.postCollision[i] == self then
+                    table.remove(self.world.events.postCollision, i)
+                    break
+                end
+            end
+            self.events.postCollision = {}
+        end
+    end
+
     for key, value in pairs(base) do
         self[key] = nil
     end
@@ -42,6 +79,18 @@ end
 
 function base:setSleepingAllowed(allowed)
     self.body:setSleepingAllowed(allowed)
+end
+
+function base:setDensity(density)
+    self.fixture:setDensity(density)
+end
+
+function base:setRestitution(restruction)
+    self.fixture:setRestitution(restruction)
+end
+
+function base:setFriction(friction)
+    self.fixture:setFriction(friction)
 end
 
 function base:setMassData(x, y, mass, inertia)
