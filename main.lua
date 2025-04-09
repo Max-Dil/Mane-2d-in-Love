@@ -11,5 +11,6 @@ function mane.load()
     local player = group:newRect(centerX, centerY, 50, 50)
     world:addBody(player, "dynamic")
 
+    mane.display.renderMode = 'hybrid'
     world.update = true
 end

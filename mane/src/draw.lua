@@ -283,6 +283,7 @@ m.newGroup = function(group)
         local obj = group.obj[i]
         if obj.isVisible then
             love.graphics.push()
+            love.graphics.setShader(obj.shader or nil)
             m[obj._type](obj)
             love.graphics.pop()
 

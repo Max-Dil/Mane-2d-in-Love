@@ -24,6 +24,10 @@ SOFTWARE.
 
 local m = {}
 
+m.newShader = function (code)
+    return love.graphics.newShader(code)
+end
+
 m.newArrayImage = function (sprites)
     local images = {}
     for i = 1, #sprites, 1 do
