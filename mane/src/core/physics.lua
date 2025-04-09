@@ -118,7 +118,7 @@ function worldClass:removePreCollision(obj, listener)
             break
         end
     end
-    if #obj.events.preCollision < 0 then
+    if #obj.events.preCollision == 0 then
         for i = self.events.preCollision, 1, -1 do
             if self.events.preCollision[i] == obj then
                 table.remove(self.events.preCollision, i)
@@ -140,7 +140,7 @@ function worldClass:removePostCollision(obj, listener)
             break
         end
     end
-    if #obj.events.postCollision < 0 then
+    if #obj.events.postCollision == 0 then
         for i = self.events.postCollision, 1, -1 do
             if self.events.postCollision[i] == obj then
                 table.remove(self.events.postCollision, i)
@@ -168,7 +168,7 @@ end
 
 m.newWorld = function (gx, gy, sleep)
     local world = setmetatable({
-        world = love.physics.newWorld( gx or 0, gy or 0, sleep and sleep or false),
+        world = love.physics.newWorld(gx or 0, gy or 0, sleep and sleep or false),
         update = false
     }, {__index = worldClass})
     world.events = {
@@ -177,98 +177,94 @@ m.newWorld = function (gx, gy, sleep)
         postCollision = {}
     }
     world.world:setCallbacks(
-    function (a, b) -- коллизи
-        local obj1 = a:getUserData() or {}
-        local obj2 = b:getUserData() or {}
-        for i = #world.events.collision, 1, -1 do
-            local result
-            for i2 = #world.events.collision[i].events.collision, 1, -1 do
-                if world.events.collision[i] == obj1 or world.events.collision[i] == obj2 then
-                    result = world.events.collision[i].events.collision[i2](
-                        {
-                            phase = "began",
-                            target = obj1,
-                            other = obj2
-                        }
-                    )
+        function (a, b)
+            local obj1 = a:getUserData() or {}
+            local obj2 = b:getUserData() or {}
+            for i = #world.events.collision, 1, -1 do
+                local obj = world.events.collision[i]
+                if obj and (obj == obj1 or obj == obj2) then
+                    for i2 = #obj.events.collision, 1, -1 do
+                        local result = obj.events.collision[i2](
+                            {
+                                phase = "began",
+                                target = obj1,
+                                other = obj2
+                            }
+                        )
+                        if result then break end
+                    end
                 end
             end
-            if result then
-                break
+            if mane.physics.globalCollision then
+                mane.physics.globalCollision(obj1, obj2)
             end
-        end
-        if mane.physics.globalCollision then
-            mane.physics.globalCollision(obj1, obj2)
-        end
-    end,
-    function (a, b) -- после коллизии
-        local obj1 = a:getUserData() or {}
-        local obj2 = b:getUserData() or {}
-        for i = #world.events.collision, 1, -1 do
-            local result
-            for i2 = #world.events.collision[i].events.collision, 1, -1 do
-                if world.events.collision[i] == obj1 or world.events.collision[i] == obj2 then
-                    result = world.events.collision[i].events.collision[i2](
-                        {
-                            phase = "ended",
-                            target = obj1,
-                            other = obj2
-                        }
-                    )
+        end,
+        function (a, b)
+            local obj1 = a:getUserData() or {}
+            local obj2 = b:getUserData() or {}
+            for i = #world.events.collision, 1, -1 do
+                local obj = world.events.collision[i]
+                if obj and (obj == obj1 or obj == obj2) then
+                    for i2 = #obj.events.collision, 1, -1 do
+                        local result = obj.events.collision[i2](
+                            {
+                                phase = "ended",
+                                target = obj1,
+                                other = obj2
+                            }
+                        )
+                        if result then break end
+                    end
                 end
             end
-            if result then
-                break
+            if mane.physics.endGlobalCollision then
+                mane.physics.endGlobalCollision(obj1, obj2)
             end
-        end
-        if mane.physics.endGlobalCollision then
-            mane.physics.endGlobalCollision(obj1, obj2)
-        end
-    end,
-    function (a, b) -- предикт до коллизии
-        local obj1 = a:getUserData() or {}
-        local obj2 = b:getUserData() or {}
-        for i = #world.events.preCollision, 1, -1 do
-            for i2 = #world.events.preCollision[i].events.preCollision, 1, -1 do
-                if world.events.preCollision[i] == obj1 or world.events.preCollision[i] == obj2 then
-                    world.events.preCollision[i].events.preCollision[i2](
-                        {
-                            phase = "pre",
-                            target = obj1,
-                            other = obj2
-                        }
-                    )
+        end,
+        function (a, b)
+            local obj1 = a:getUserData() or {}
+            local obj2 = b:getUserData() or {}
+            for i = #world.events.preCollision, 1, -1 do
+                local obj = world.events.preCollision[i]
+                if obj and (obj == obj1 or obj == obj2) then
+                    for i2 = #obj.events.preCollision, 1, -1 do
+                        obj.events.preCollision[i2](
+                            {
+                                phase = "pre",
+                                target = obj1,
+                                other = obj2
+                            }
+                        )
+                    end
                 end
             end
-        end
-        if mane.physics.preGlobalCollision then
-            mane.physics.preGlobalCollision(obj1, obj2)
-        end
-    end,
-    function (a, b) -- предиет после коллизии
-        local obj1 = a:getUserData() or {}
-        local obj2 = b:getUserData() or {}
-        for i = #world.events.postCollision, 1, -1 do
-            local result
-            for i2 = #world.events.postCollision[i].events.postCollision, 1, -1 do
-                if world.events.postCollision[i] == obj1 or world.events.postCollision[i] == obj2 then
-                    result = world.events.postCollision[i].events.postCollision[i2](
-                        {
-                            phase = "post",
-                            target = obj1,
-                            other = obj2
-                        }
-                    )
+            if mane.physics.preGlobalCollision then
+                mane.physics.preGlobalCollision(obj1, obj2)
+            end
+        end,
+        function (a, b)
+            local obj1 = a:getUserData() or {}
+            local obj2 = b:getUserData() or {}
+            for i = #world.events.postCollision, 1, -1 do
+                local obj = world.events.postCollision[i]
+                if obj and (obj == obj1 or obj == obj2) then
+                    for i2 = #obj.events.postCollision, 1, -1 do
+                        local result = obj.events.postCollision[i2](
+                            {
+                                phase = "post",
+                                target = obj1,
+                                other = obj2
+                            }
+                        )
+                        if result then break end
+                    end
                 end
             end
-            if result then
-                break
+            if mane.physics.postGlobalCollision then
+                mane.physics.postGlobalCollision(obj1, obj2)
             end
         end
-        if mane.physics.postGlobalCollision then
-            mane.physics.postGlobalCollision(obj1, obj2)
-        end
-    end)
+    )
     table.insert(m.worlds, world)
     return world
 end
