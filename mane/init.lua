@@ -4,7 +4,7 @@ function love.distance(x1, y1, x2, y2) local dx = x2 - x1 local dy = y2 - y1 ret
 --[[
 MIT License
 
-Copyright (c) 2024 Max-Dil
+Copyright (c) 2025 Max-Dil
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,13 +30,14 @@ _G.mane = {
 	resize = function (w, h)end,
     images = {},
     fonts = {},
+	sounds = {},
     fps = 1000,
 	core = {},
 	json = require("mane.lib.json"),
 	speed = 0
 }
 
-local moduls = {"display","graphics","physics","key","update","click","timer"}
+local moduls = {"display","graphics","physics","key","update","click","timer","audio"}
 for _, name in ipairs(moduls) do
 	require("mane.src.core."..name)
 end

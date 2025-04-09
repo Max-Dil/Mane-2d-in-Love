@@ -1,9 +1,0 @@
-:addEvent("update", listener)
-:removeEvent("update", listener)
--- Группы поддерживаются
-
-Возращаемая таблица:
-{
-    dt = dt,
-    target = obj
-}
