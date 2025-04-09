@@ -6,6 +6,7 @@ collision - start, end of collision
 
 code example:
 
+```lua
 require("mane")
 
 function mane.load()
@@ -24,3 +25,4 @@ end
 
 want to change something?
 request branch change
+```
