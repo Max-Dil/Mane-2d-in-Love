@@ -27,6 +27,7 @@ SOFTWARE.
 
 _G.mane = {
     load = function () end,
+	resize = function (w, h)end,
     images = {},
     fonts = {},
     fps = 1000,
@@ -51,6 +52,15 @@ end
 local draw = require("mane.src.draw")
 function love.draw()
     draw()
+end
+
+function love.resize(w, h)
+	mane.display.width = w
+	mane.display.height = h
+	mane.display.centerX = mane.display.width / 2
+	mane.display.centerY = mane.display.height / 2
+
+	mane.resize(w, h)
 end
 
 function love.keypressed(key, scancode, isrepeat)
