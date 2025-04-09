@@ -1,4 +1,5 @@
 require("mane")
+mane.fps = 120
 
 function mane.load()
     local centerX, centerY = mane.display.centerX, mane.display.centerY

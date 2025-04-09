@@ -95,6 +95,9 @@ function love.touchmoved(id, x, y, dx, dy, pressure)
 	mane.core.click.touchmoved(id, x, y, dx, dy, pressure)
 end
 
+mane.load()
+end
+
 function love.run()
     love.load(love.arg.parseGameArguments(arg), arg)
 	love.timer.step()
@@ -126,7 +129,4 @@ function love.run()
 
 		love.timer.sleep(1/mane.fps)
 	end
-end
-
-mane.load()
 end
