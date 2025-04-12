@@ -72,24 +72,26 @@ end
 m.newPrintf = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
+    love.graphics.setFont(obj.font)
     if type(obj.text) == "table" then
-        love.graphics.printf(obj.text, obj.font, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle), obj.xScale, obj.yScale)
+        love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle), obj.xScale, obj.yScale)
     else
         local textWidth = obj.font:getWidth(obj.text)
         local textHeight = obj.font:getHeight(obj.text)
-        love.graphics.printf(obj.text, obj.font, obj.x, obj.y, obj.limit, obj.align,  math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
+        love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
     end
 end
 
 m.newPrint = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
+    love.graphics.setFont(obj.font)
     if type(obj.text) == "table" then
-        love.graphics.print(obj.text, obj.font, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale)
+        love.graphics.print(obj.text, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale)
     else
         local textWidth = obj.font:getWidth(obj.text)
         local textHeight = obj.font:getHeight(obj.text)
-        love.graphics.print(obj.text, obj.font, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
+        love.graphics.print(obj.text, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
     end
 end
 

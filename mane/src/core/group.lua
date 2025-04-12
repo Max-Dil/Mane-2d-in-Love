@@ -163,6 +163,7 @@ end
 function m:newPrintf(text, font, x, y, limit, align, fontSize)
     if type(font) == "number" then
         x, y, limit, align = font, x, y, limit
+        font = nil
     else
         if not mane.fonts[font] then
             mane.fonts[font] = love.graphics.newFont(font, fontSize or 20)
@@ -174,12 +175,19 @@ function m:newPrintf(text, font, x, y, limit, align, fontSize)
         y = y,
         limit = limit or 200,
         align = align or "left",
-        font = type(font) == "string" and mane.fonts[font] or love.graphics.getFont(),
+        fontPath = type(font) == "string" and font or nil,
+        font = type(font) == "string" and mane.fonts[font] or love.graphics.newFont(fontSize or 20),
         fontSize = fontSize or 20,
-        setFontSize = function (fontSize)
-            mane.fonts[self.font] = love.graphics.setNewFont(mane.fonts[self.font], self.fontSize or 20)
+        setFontSize = function(self, fontSize)
+            if self.fontPath then
+                local newFont = love.graphics.newFont(self.fontPath, fontSize)
+                mane.fonts[self.fontPath .. "_" .. fontSize] = newFont
+                self.font = newFont
+            else
+
+                self.font = love.graphics.newFont(fontSize)
+            end
             self.fontSize = fontSize
-            self.font = mane.fonts[font]
         end,
         mode = "fill",
         _type = "newPrintf",
@@ -205,6 +213,7 @@ end
 function m:newPrint(text, font, x, y, fontSize)
     if type(font) == "number" then
         x, y, fontSize = font, x, y
+        font = nil
     else
         if not mane.fonts[font] then
             mane.fonts[font] = love.graphics.newFont(font, fontSize or 20)
@@ -214,12 +223,19 @@ function m:newPrint(text, font, x, y, fontSize)
         text = text,
         x = x,
         y = y,
-        font = type(font) == "string" and mane.fonts[font] or love.graphics.getFont(),
+        fontPath = type(font) == "string" and font or nil,
+        font = type(font) == "string" and mane.fonts[font] or love.graphics.newFont(fontSize or 20),
         fontSize = fontSize or 20,
-        setFontSize = function (fontSize)
-            mane.fonts[self.font] = love.graphics.setNewFont(mane.fonts[self.font], self.fontSize or 20)
+        setFontSize = function(self, fontSize)
+            if self.fontPath then
+                local newFont = love.graphics.newFont(self.fontPath, fontSize)
+                mane.fonts[self.fontPath .. "_" .. fontSize] = newFont
+                self.font = newFont
+            else
+
+                self.font = love.graphics.newFont(fontSize)
+            end
             self.fontSize = fontSize
-            self.font = mane.fonts[font]
         end,
         mode = "fill",
         _type = "newPrint",
