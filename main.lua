@@ -15,7 +15,7 @@ function mane.load()
     mane.display.renderMode = 'hybrid'
     world.update = true
 
-    local c = group:newPrint('lox', 200, 200, 70)
+    local c = group:newPrint('Text', 200, 200, 70)
 end
 
 

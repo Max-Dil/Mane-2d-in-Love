@@ -164,9 +164,18 @@ function m:newPrintf(text, font, x, y, limit, align, fontSize)
     if type(font) == "number" then
         x, y, limit, align = font, x, y, limit
         font = nil
+    end
+    fontSize = fontSize or 20
+    local fontKey
+    if type(font) == "string" then
+        fontKey = font .. "_" .. fontSize
+        if not mane.fonts[fontKey] then
+            mane.fonts[fontKey] = love.graphics.newFont(font, fontSize)
+        end
     else
-        if not mane.fonts[font] then
-            mane.fonts[font] = love.graphics.newFont(font, fontSize or 20)
+        fontKey = "default_" .. fontSize
+        if not mane.fonts[fontKey] then
+            mane.fonts[fontKey] = love.graphics.newFont(fontSize)
         end
     end
     local obj = setmetatable({
@@ -176,18 +185,26 @@ function m:newPrintf(text, font, x, y, limit, align, fontSize)
         limit = limit or 200,
         align = align or "left",
         fontPath = type(font) == "string" and font or nil,
-        font = type(font) == "string" and mane.fonts[font] or love.graphics.newFont(fontSize or 20),
-        fontSize = fontSize or 20,
-        setFontSize = function(self, fontSize)
+        fontKey = fontKey,
+        font = mane.fonts[fontKey],
+        fontSize = fontSize,
+        setFontSize = function(self, newFontSize)
             if self.fontPath then
-                local newFont = love.graphics.newFont(self.fontPath, fontSize)
-                mane.fonts[self.fontPath .. "_" .. fontSize] = newFont
-                self.font = newFont
+                local newFontKey = self.fontPath .. "_" .. newFontSize
+                if not mane.fonts[newFontKey] then
+                    mane.fonts[newFontKey] = love.graphics.newFont(self.fontPath, newFontSize)
+                end
+                self.fontKey = newFontKey
+                self.font = mane.fonts[newFontKey]
             else
-
-                self.font = love.graphics.newFont(fontSize)
+                local newFontKey = "default_" .. newFontSize
+                if not mane.fonts[newFontKey] then
+                    mane.fonts[newFontKey] = love.graphics.newFont(newFontSize)
+                end
+                self.fontKey = newFontKey
+                self.font = mane.fonts[newFontKey]
             end
-            self.fontSize = fontSize
+            self.fontSize = newFontSize
         end,
         mode = "fill",
         _type = "newPrintf",
@@ -205,7 +222,7 @@ function m:newPrintf(text, font, x, y, limit, align, fontSize)
             key = {},
             update = {}
         }
-    },{__index = base})
+    }, {__index = base})
     table.insert(self.obj, obj)
     return obj
 end
@@ -214,9 +231,18 @@ function m:newPrint(text, font, x, y, fontSize)
     if type(font) == "number" then
         x, y, fontSize = font, x, y
         font = nil
+    end
+    fontSize = fontSize or 20
+    local fontKey
+    if type(font) == "string" then
+        fontKey = font .. "_" .. fontSize
+        if not mane.fonts[fontKey] then
+            mane.fonts[fontKey] = love.graphics.newFont(font, fontSize)
+        end
     else
-        if not mane.fonts[font] then
-            mane.fonts[font] = love.graphics.newFont(font, fontSize or 20)
+        fontKey = "default_" .. fontSize
+        if not mane.fonts[fontKey] then
+            mane.fonts[fontKey] = love.graphics.newFont(fontSize)
         end
     end
     local obj = setmetatable({
@@ -224,18 +250,26 @@ function m:newPrint(text, font, x, y, fontSize)
         x = x,
         y = y,
         fontPath = type(font) == "string" and font or nil,
-        font = type(font) == "string" and mane.fonts[font] or love.graphics.newFont(fontSize or 20),
-        fontSize = fontSize or 20,
-        setFontSize = function(self, fontSize)
+        fontKey = fontKey,
+        font = mane.fonts[fontKey],
+        fontSize = fontSize,
+        setFontSize = function(self, newFontSize)
             if self.fontPath then
-                local newFont = love.graphics.newFont(self.fontPath, fontSize)
-                mane.fonts[self.fontPath .. "_" .. fontSize] = newFont
-                self.font = newFont
+                local newFontKey = self.fontPath .. "_" .. newFontSize
+                if not mane.fonts[newFontKey] then
+                    mane.fonts[newFontKey] = love.graphics.newFont(self.fontPath, newFontSize)
+                end
+                self.fontKey = newFontKey
+                self.font = mane.fonts[newFontKey]
             else
-
-                self.font = love.graphics.newFont(fontSize)
+                local newFontKey = "default_" .. newFontSize
+                if not mane.fonts[newFontKey] then
+                    mane.fonts[newFontKey] = love.graphics.newFont(newFontSize)
+                end
+                self.fontKey = newFontKey
+                self.font = mane.fonts[newFontKey]
             end
-            self.fontSize = fontSize
+            self.fontSize = newFontSize
         end,
         mode = "fill",
         _type = "newPrint",
@@ -253,7 +287,7 @@ function m:newPrint(text, font, x, y, fontSize)
             key = {},
             update = {}
         }
-    },{__index = base})
+    }, {__index = base})
     table.insert(self.obj, obj)
     return obj
 end
