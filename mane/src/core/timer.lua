@@ -1,7 +1,7 @@
 --[[
 MIT License
 
-Copyright (c) 2024 Max-Dil
+Copyright (c) 2025 Max-Dil
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -123,26 +123,25 @@ m.cancelAll = function(name)
 end
 
 function m.update(dt)
-    local dt = dt + mane.speed
+    local dt = dt
     for i = #running, 1, -1 do
-        if not running[i] then
-            table.remove(running, i)
-        end
+        local toRemove = false
         if running[i].on then
             running[i].time = running[i].time - (dt * 1000)
             if running[i].time <= 0 then
                 running[i].listener(dt)
                 if running[i] then
                     if running[i].rep == 1 then
-                        running[i]:cancel()
+                        toRemove = true
                     else
                         running[i].rep = running[i].rep - 1
                         running[i].time = running[i]._time
                     end
-                else
-                    table.remove(running, i)
                 end
             end
+        end
+        if toRemove then
+            table.remove(running, i)
         end
     end
 end

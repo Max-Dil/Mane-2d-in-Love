@@ -15,3 +15,40 @@ function mane.load()
     mane.display.renderMode = 'hybrid'
     world.update = true
 end
+
+
+-- скролл
+--[[
+require("mane")
+mane.fps = 120
+
+function mane.load()
+    local centerX, centerY = mane.display.centerX, mane.display.centerY
+    local group = mane.display.game
+
+    local container = group:newContainer(centerX, centerY, 200, 300)
+    container.group = group:newGroup()
+    container:insert(container.group)
+
+    for i = 1, 10 do
+        local rect = container.group:newRect(0, (i - 1) * 60, 150, 50)
+        rect:setColor(math.random(), math.random(), math.random(), 1)
+    end
+
+    local startY = 0
+    local isScrolling = false
+
+    container:addEvent("touch", function(e)
+        if e.phase == "began" then
+            startY = e.y
+            isScrolling = true
+        elseif e.phase == "moved" and isScrolling then
+            local deltaY = e.y - startY
+            container.group:translate(0, deltaY)
+            startY = e.y
+        elseif e.phase == "ended" or e.phase == "cancelled" then
+            isScrolling = false
+        end
+    end)
+end
+]]

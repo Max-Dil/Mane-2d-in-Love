@@ -73,6 +73,14 @@ function base:removeBody()
     end
 end
 
+function base:setMask(mask)
+    mane.physics.setCategory(self, mask)
+end
+
+base["setСategory"] = function (self, category)
+    mane.physics.setCategory(self, category)
+end
+
 function base:setType(bodyType)
     self.body:setType(bodyType)
 end

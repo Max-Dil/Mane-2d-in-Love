@@ -1,7 +1,7 @@
 --[[
 MIT License
 
-Copyright (c) 2024 Max-Dil
+Copyright (c) 2025 Max-Dil
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -64,40 +64,6 @@ m.newContainer = function (container)
             love.graphics.push()
             m[obj._type](obj)
             love.graphics.pop()
-            -- if mane.display.renderMode == "hybrid" and obj.body and obj.shape then
-            --     local x, y = obj.body:getPosition()
-            --     local angle = obj.body:getAngle()
-
-            --     love.graphics.push()
-            --     love.graphics.translate(x, y)
-            --     love.graphics.rotate(angle)
-
-            --     if obj.body:getType() == "static" then
-            --         love.graphics.setColor(1,0,0,1)
-            --     else
-            --         if obj.body:isActive() then
-            --             love.graphics.setColor(0,1,0,1)
-            --         else
-            --             love.graphics.setColor(0.5,0.5,0.5,1)
-            --         end
-            --     end
-            --     if obj.bodyOptions.shape == "rect" then
-            --         love.graphics.rectangle("line", 0 - obj.bodyOptions.width/2, 0 - obj.bodyOptions.height/2, obj.bodyOptions.width, obj.bodyOptions.height)
-            --     elseif obj.bodyOptions.shape == "circle" then
-            --         love.graphics.circle('line', 0, 0, obj.bodyOptions.radius)
-            --     elseif obj.bodyOptions.shape == "chain" then
-            --         local points = obj.bodyOptions.points
-            --         love.graphics.line(points)
-            --     elseif obj.bodyOptions.shape == "edge" then
-            --         local x1, y1 = obj.bodyOptions.x1, obj.bodyOptions.y1
-            --         local x2, y2 = obj.bodyOptions.x2, obj.bodyOptions.y2
-            --         love.graphics.line(x1, y1, x2, y2)
-            --     elseif obj.bodyOptions.shape == "polygon" then
-            --         local points = obj.bodyOptions.vertices
-            --         love.graphics.polygon("line", points)
-            --     end
-            --     love.graphics.pop()
-            -- end
         end
     end
     love.graphics.setScissor()
@@ -286,49 +252,6 @@ m.newGroup = function(group)
             love.graphics.setShader(obj.shader or nil)
             m[obj._type](obj)
             love.graphics.pop()
-
-            -- if mane.display.renderMode == "hybrid" and obj.body and obj.shape then
-            --     local bx, by = obj.body:getPosition()
-            --     local bAngle = obj.body:getAngle()
-
-            --     local gx, gy = group.x, group.y
-            --     local gAngle = math.rad(group.angle)
-            --     local gScaleX, gScaleY = group.xScale, group.yScale
-
-            --     local tx = (bx - gx) / gScaleX
-            --     local ty = (by - gy) / gScaleY
-            --     local transformedAngle = bAngle - gAngle
-
-            --     love.graphics.push()
-            --     love.graphics.translate(tx, ty)
-            --     love.graphics.rotate(transformedAngle)
-
-            --     if obj.body:getType() == "static" then
-            --         love.graphics.setColor(1,0,0,1)
-            --     else
-            --         if obj.body:isActive() then
-            --             love.graphics.setColor(0,1,0,1)
-            --         else
-            --             love.graphics.setColor(0.5,0.5,0.5,1)
-            --         end
-            --     end
-            --     if obj.bodyOptions.shape == "rect" then
-            --         love.graphics.rectangle("line", 0 - obj.bodyOptions.width/2, 0 - obj.bodyOptions.height/2, obj.bodyOptions.width, obj.bodyOptions.height)
-            --     elseif obj.bodyOptions.shape == "circle" then
-            --         love.graphics.circle('line', 0, 0, obj.bodyOptions.radius)
-            --     elseif obj.bodyOptions.shape == "chain" then
-            --         local points = obj.bodyOptions.points
-            --         love.graphics.line(points)
-            --     elseif obj.bodyOptions.shape == "edge" then
-            --         local x1, y1 = obj.bodyOptions.x1, obj.bodyOptions.y1
-            --         local x2, y2 = obj.bodyOptions.x2, obj.bodyOptions.y2
-            --         love.graphics.line(x1, y1, x2, y2)
-            --     elseif obj.bodyOptions.shape == "polygon" then
-            --         local points = obj.bodyOptions.vertices
-            --         love.graphics.polygon("line", points)
-            --     end
-            --     love.graphics.pop()
-            -- end
         end
     end
     love.graphics.pop()

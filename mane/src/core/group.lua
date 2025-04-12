@@ -569,7 +569,18 @@ function m:newGroup()
             end)
         end
         self.obj = {}
-    end 
+    end
+    function group:moveToGroup(newGroup)
+        local group = self.group
+        for i = #group.obj, 1, -1 do
+            if group.obj[i] == self then
+                table.remove(group.obj, i)
+                break
+            end
+        end
+        self.group = newGroup
+        table.insert(newGroup.obj, self)
+    end
     function group:toBack(self)
         local group = self.group
         for i = #group.obj, 1, -1 do
@@ -590,6 +601,17 @@ function m:newGroup()
             end
         end
         table.insert(group.obj, self)
+    end
+    function group:translate(x, y)
+        self.x, self.y = self.x + x, self.y + y
+    end
+    function group:rotate(angle)
+        self.angle = self.angle + angle
+        self.angle = self.angle % 360
+    end
+    function group:scale(x, y)
+        self.xScale = self.xScale+x
+        self.yScale = self.yScale+y
     end
     table.insert(self.obj, group)
     return group
@@ -653,4 +675,16 @@ function mane.display.game.remove(self)
             end
         end
     end
+end
+function mane.display.game.translate(self, x, y)
+    self.x, self.y = self.x + x, self.y + y
+end
+
+function mane.display.game.rotate(self, angle)
+    self.angle = self.angle + angle
+    self.angle = self.angle % 360
+end
+function mane.display.game.scale(self, x, y)
+    self.xScale = self.xScale+x
+    self.yScale = self.yScale+y
 end
