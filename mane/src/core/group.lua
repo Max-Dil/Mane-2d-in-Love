@@ -206,6 +206,9 @@ function m:newPrintf(text, font, x, y, limit, align, fontSize)
             end
             self.fontSize = newFontSize
         end,
+        getWidth = function (self)
+            return self.font:getWidth(self.text)
+        end,
         mode = "fill",
         _type = "newPrintf",
         color = {1,1,1,1},
