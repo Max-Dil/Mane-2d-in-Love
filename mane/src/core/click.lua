@@ -146,7 +146,7 @@ local function pressed(_device, ...)
         id, x, y, dx, dy, pressure = params[1], params[2], params[3], params[4], params[5], params[6]
     end
 
-    local function call_func(obj)
+    local function call_func(obj, x, y)
         if not obj.isTouch then
             table.insert(m.focus, obj)
         end
@@ -170,53 +170,61 @@ local function pressed(_device, ...)
             end
         end
     end
+
     for i = #m.running, 1, -1 do
         local obj = m.running[i]
         if obj.group.isVisible then
+            local clickX = x
+            local clickY = y
+            if obj.group then
+                clickX = x - (obj.group.x or 0)
+                clickY = y - (obj.group.y or 0)
+            end
+
             if obj._type == "newRect" then
-                if clickCheck.rect(obj, x, y) then
-                    local result = call_func(obj)
+                if clickCheck.rect(obj, clickX, clickY) then
+                    local result = call_func(obj, x, y)
                     if result then
                         break
                     end
                 end
             elseif obj._type == "newCircle" then
-                if love.distance(x, y, obj.x, obj.y) < obj.radius then
-                    local result = call_func(obj)
+                if love.distance(clickX, clickY, obj.x, obj.y) < obj.radius then
+                    local result = call_func(obj, x, y)
                     if result then
                         break
                     end
                 end
             elseif obj._type == "newArc" then
-                if clickCheck.arc(obj, x, y) then
-                    local result = call_func(obj)
+                if clickCheck.arc(obj, clickX, clickY) then
+                    local result = call_func(obj, x, y)
                     if result then
                         break
                     end
                 end
-            elseif  obj._type == "newImage" or obj._type == "newLayerImage" then
+            elseif obj._type == "newImage" or obj._type == "newLayerImage" then
                 local image = obj._type == "newImage" and obj.image or obj.image[obj.layerindex]
                 local imageWidth, imageHeight = obj.image:getDimensions()
                 local x1 = obj.x - imageWidth * obj.xScale / 2
                 local y1 = obj.y - imageHeight * obj.yScale / 2
                 local x2 = obj.x + imageWidth * obj.xScale / 2
                 local y2 = obj.y + imageHeight * obj.yScale / 2
-                if x >= x1 and x <= x2 and y >= y1 and y <= y2 then
-                    local result = call_func(obj)
+                if clickX >= x1 and clickX <= x2 and clickY >= y1 and clickY <= y2 then
+                    local result = call_func(obj, x, y)
                     if result then
                         break
                     end
                 end
             elseif obj._type == "newEllipse" then
-                if math.pow((x - obj.x) / obj.radiusx, 2) + math.pow((y - obj.y) / obj.radiusy, 2) <= 1 then
-                    local result = call_func(obj)
+                if math.pow((clickX - obj.x) / obj.radiusx, 2) + math.pow((clickY - obj.y) / obj.radiusy, 2) <= 1 then
+                    local result = call_func(obj, x, y)
                     if result then
                         break
                     end
                 end
             elseif obj._type == "newLine" then
-                if clickCheck.isPointOnLine(obj, x, y) then
-                    local result = call_func(obj)
+                if clickCheck.isPointOnLine(obj, clickX, clickY) then
+                    local result = call_func(obj, x, y)
                     if result then
                         break
                     end
@@ -227,8 +235,8 @@ local function pressed(_device, ...)
                     width, height = width*1.5, height*1.5
                     local pointX = (obj.x - width) + obj.points[j]
                     local pointY = (obj.y - height) + obj.points[j + 1]
-                    if love.distance(x, y, pointX, pointY) <= obj.size / 2 then
-                        local result = call_func(obj)
+                    if love.distance(clickX, clickY, pointX, pointY) <= obj.size / 2 then
+                        local result = call_func(obj, x, y)
                         if result then
                             return true
                         end
@@ -236,8 +244,8 @@ local function pressed(_device, ...)
                     end
                 end
             elseif obj._type == "newPolygon" then
-                if mane.graphics.pointInPolygon(obj.vertices, x, y, obj) then
-                    local result = call_func(obj)
+                if mane.graphics.pointInPolygon(obj.vertices, clickX, clickY, obj) then
+                    local result = call_func(obj, x, y)
                     if result then
                         break
                     end
@@ -256,8 +264,8 @@ local function pressed(_device, ...)
                 local y1 = obj.y - textHeight / 2
                 local x2 = obj.x + textWidth / 2
                 local y2 = obj.y + textHeight / 2
-                if x >= x1 and x <= x2 and y >= y1 and y <= y2 then
-                    local result = call_func(obj)
+                if clickX >= x1 and clickX <= x2 and clickY >= y1 and clickY <= y2 then
+                    local result = call_func(obj, x, y)
                     if result then
                         break
                     end
@@ -267,22 +275,20 @@ local function pressed(_device, ...)
                 local frameHeight = obj.spriteSheet.frameHeight
                 local scaledWidth = frameWidth * obj.xScale
                 local scaledHeight = frameHeight * obj.yScale
-    
                 local x1 = obj.x - scaledWidth / 2
                 local y1 = obj.y - scaledHeight / 2
                 local x2 = obj.x + scaledWidth / 2
                 local y2 = obj.y + scaledHeight / 2
-    
-                if x >= x1 and x <= x2 and y >= y1 and y <= y2 then
-                    local result = call_func(obj)
+                if clickX >= x1 and clickX <= x2 and clickY >= y1 and clickY <= y2 then
+                    local result = call_func(obj, x, y)
                     if result then
                         break
                     end
                 end
             elseif obj._type == "newContainer" then
-                if x > (obj.x - obj.width / 2) and x < (obj.x + obj.width / 2) and
-                   y > (obj.y - obj.height / 2) and y < (obj.y + obj.height / 2) then
-                    local result = call_func(obj)
+                if clickX > (obj.x - obj.width / 2) and clickX < (obj.x + obj.width / 2) and
+                   clickY > (obj.y - obj.height / 2) and clickY < (obj.y + obj.height / 2) then
+                    local result = call_func(obj, x, y)
                     if result then
                         break
                     end
