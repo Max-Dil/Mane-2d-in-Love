@@ -65,7 +65,7 @@ m.groupUpdate = function(group, dt)
 end
 
 return function (dt)
-    dt = dt + mane.speed
+    dt = dt * mane.speed
     mane.timer.update(dt)
 
     mane.physics.update(dt)
