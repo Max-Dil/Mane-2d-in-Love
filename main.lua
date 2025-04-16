@@ -3,21 +3,30 @@ mane.fps = 120
 
 function mane.load()
     local centerX, centerY = mane.display.centerX, mane.display.centerY
-    local group = mane.display.game -- default group
+    local group = mane.display.game
     local world = mane.physics.newWorld(0, 500)
 
-    local platform = group:newRect(centerX, centerY+100, 300, 50)
+    local platform = group:newRect(centerX, centerY + 100, 300, 50)
     world:addBody(platform, "static")
 
     local player = group:newRect(centerX, centerY, 50, 50)
     world:addBody(player, "dynamic")
+
+    player:addEvent("collision", function(event)
+        if event.phase == "began" then
+            print("Collision began: Player (" .. event.target.x .. ", " .. event.target.y .. ") with " ..
+                  event.other._type .. " at (" .. event.other.x .. ", " .. event.other.y .. ")")
+        elseif event.phase == "ended" then
+            print("Collision ended: Player (" .. event.target.x .. ", " .. event.target.y .. ") with " ..
+                  event.other._type .. " at (" .. event.other.x .. ", " .. event.other.y .. ")")
+        end
+    end)
 
     mane.display.renderMode = 'hybrid'
     world.update = true
 
     local c = group:newPrint('Text', 200, 200, 70)
 end
-
 
 -- скролл
 --[[
