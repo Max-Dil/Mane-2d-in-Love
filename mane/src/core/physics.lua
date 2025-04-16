@@ -182,7 +182,7 @@ m.newWorld = function(gx, gy, sleep)
     }
 
     world.world:setCallbacks(
-        function(a, b)
+        function(a, b, contact)
             local obj1 = a:getUserData() or {}
             local obj2 = b:getUserData() or {}
             for i = #world.events.collision, 1, -1 do
@@ -196,14 +196,21 @@ m.newWorld = function(gx, gy, sleep)
                     else
                         goto continue
                     end
+                    local x1, y1, x2, y2 = contact:getPositions()
+                    local nx, ny = contact:getNormal()
+                    local event = {
+                        phase = "began",
+                        target = target,
+                        other = other,
+                        contact = {
+                            positions = x1 and {{x = x1, y = y1}, x2 and {x = x2, y = y2} or nil} or {},
+                            normal = {x = nx, y = ny},
+                            isTouching = contact:isTouching(),
+                            isEnabled = contact:isEnabled()
+                        }
+                    }
                     for i2 = #obj.events.collision, 1, -1 do
-                        local result = obj.events.collision[i2](
-                            {
-                                phase = "began",
-                                target = target,
-                                other = other
-                            }
-                        )
+                        local result = obj.events.collision[i2](event)
                         if result then break end
                     end
                 end
@@ -213,7 +220,7 @@ m.newWorld = function(gx, gy, sleep)
                 mane.physics.globalCollision(obj1, obj2)
             end
         end,
-        function(a, b)
+        function(a, b, contact)
             local obj1 = a:getUserData() or {}
             local obj2 = b:getUserData() or {}
             for i = #world.events.collision, 1, -1 do
@@ -227,14 +234,17 @@ m.newWorld = function(gx, gy, sleep)
                     else
                         goto continue
                     end
+                    local event = {
+                        phase = "ended",
+                        target = target,
+                        other = other,
+                        contact = {
+                            isTouching = contact:isTouching(),
+                            isEnabled = contact:isEnabled()
+                        }
+                    }
                     for i2 = #obj.events.collision, 1, -1 do
-                        local result = obj.events.collision[i2](
-                            {
-                                phase = "ended",
-                                target = target,
-                                other = other
-                            }
-                        )
+                        local result = obj.events.collision[i2](event)
                         if result then break end
                     end
                 end
@@ -244,7 +254,8 @@ m.newWorld = function(gx, gy, sleep)
                 mane.physics.endGlobalCollision(obj1, obj2)
             end
         end,
-        function(a, b)
+        -- PreCollision
+        function(a, b, contact)
             local obj1 = a:getUserData() or {}
             local obj2 = b:getUserData() or {}
             for i = #world.events.preCollision, 1, -1 do
@@ -258,14 +269,21 @@ m.newWorld = function(gx, gy, sleep)
                     else
                         goto continue
                     end
+                    local x1, y1, x2, y2 = contact:getPositions()
+                    local nx, ny = contact:getNormal()
+                    local event = {
+                        phase = "pre",
+                        target = target,
+                        other = other,
+                        contact = {
+                            positions = x1 and {{x = x1, y = y1}, x2 and {x = x2, y = y2} or nil} or {},
+                            normal = {x = nx, y = ny},
+                            isTouching = contact:isTouching(),
+                            isEnabled = contact:isEnabled()
+                        }
+                    }
                     for i2 = #obj.events.preCollision, 1, -1 do
-                        obj.events.preCollision[i2](
-                            {
-                                phase = "pre",
-                                target = target,
-                                other = other
-                            }
-                        )
+                        obj.events.preCollision[i2](event)
                     end
                 end
                 ::continue::
@@ -274,7 +292,8 @@ m.newWorld = function(gx, gy, sleep)
                 mane.physics.preGlobalCollision(obj1, obj2)
             end
         end,
-        function(a, b)
+        -- PostCollision
+        function(a, b, contact)
             local obj1 = a:getUserData() or {}
             local obj2 = b:getUserData() or {}
             for i = #world.events.postCollision, 1, -1 do
@@ -288,14 +307,24 @@ m.newWorld = function(gx, gy, sleep)
                     else
                         goto continue
                     end
+                    local x1, y1, x2, y2 = contact:getPositions()
+                    local nx, ny = contact:getNormal()
+                    local normalImpulse1, normalImpulse2 = contact:getNormalImpulses()
+                    local tangentImpulse1, tangentImpulse2 = contact:getTangentImpulses()
+                    local event = {
+                        phase = "post",
+                        target = target,
+                        other = other,
+                        contact = {
+                            positions = x1 and {{x = x1, y = y1}, x2 and {x = x2, y = y2} or nil} or {},
+                            normal = {x = nx, y = ny},
+                            isTouching = contact:isTouching(),
+                            isEnabled = contact:isEnabled(),
+                            normalImpulses = normalImpulse1 and {{normal = normalImpulse1, tangent = tangentImpulse1}, normalImpulse2 and {normal = normalImpulse2, tangent = tangentImpulse2} or nil} or {}
+                        }
+                    }
                     for i2 = #obj.events.postCollision, 1, -1 do
-                        local result = obj.events.postCollision[i2](
-                            {
-                                phase = "post",
-                                target = target,
-                                other = other
-                            }
-                        )
+                        local result = obj.events.postCollision[i2](event)
                         if result then break end
                     end
                 end
