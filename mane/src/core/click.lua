@@ -1,7 +1,7 @@
 --[[
 MIT License
 
-Copyright (c) 2024 Max-Dil
+Copyright (c) 2025 Max-Dil
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -111,7 +111,8 @@ local clickCheck = {
 }
 
 function m.new(obj, listener)
-    if #obj.events.touch <= 0 then
+    obj.events.touch = obj.events.touch or {}
+    if #obj.events.touch == 0 then
         table.insert(m.running, obj)
     end
     table.insert(obj.events.touch, listener)
@@ -129,6 +130,11 @@ function m.remove(obj, listener)
             if m.running[i] == obj then
                 table.remove(m.running, i)
                 break
+            end
+        end
+        for i = #m.focus, 1, -1 do
+            if m.focus[i] == obj then
+                table.remove(m.focus, i)
             end
         end
     end

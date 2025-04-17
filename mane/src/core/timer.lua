@@ -123,7 +123,6 @@ m.cancelAll = function(name)
 end
 
 function m.update(dt)
-    local dt = dt
     for i = #running, 1, -1 do
         local toRemove = false
         if running[i].on then

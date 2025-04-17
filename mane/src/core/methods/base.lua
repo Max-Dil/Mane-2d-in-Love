@@ -57,6 +57,8 @@ end
 function base:remove()
     local group = self.group
 
+    mane.transition.cancelObject(self)
+
     if self.removeBody then
         self:removeBody()
     end

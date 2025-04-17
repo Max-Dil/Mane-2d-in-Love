@@ -69,6 +69,7 @@ return function (dt)
     mane.timer.update(dt)
 
     mane.physics.update(dt)
+    mane.transition.update(dt)
     if mane.display.game.isVisible then
         m.groupUpdate(mane.display.game, dt)
     end

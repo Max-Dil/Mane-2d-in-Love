@@ -26,6 +26,15 @@ function mane.load()
     world.update = true
 
     local c = group:newPrint('Text', 200, 200, 70)
+    local textTransition = mane.transition.to(c, {
+        x = 400,
+        time = 2,
+        transition = "outQuad",
+    })
+    local colorTransition = mane.transition.to(c.color, {
+        [4] = 0,
+        time = 2
+    })
 end
 
 -- скролл

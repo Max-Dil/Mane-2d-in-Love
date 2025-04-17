@@ -34,6 +34,7 @@ _G.mane = {
     fps = 1000,
 	core = {},
 	json = require("mane.lib.json"),
+	transition = require("mane.src.core.transition"),
 	speed = 1
 }
 
