@@ -25,6 +25,273 @@ SOFTWARE.
 local m = {}
 local base = require('mane.src.core.methods.base')
 
+function m:newTextField(x, y, width, height, options)
+    local libInput = require("mane.lib.InputField")
+    options = options or {}
+    local inputType = options.password and "password" or "normal"
+    local initialText = options.text or ""
+    local font = options.font
+    local fontSize = options.fontSize or 20
+    local align = options.align or "left"
+
+    local fontKey
+    if type(font) == "string" then
+        fontKey = font .. "_" .. fontSize
+        if not mane.fonts[fontKey] then
+            mane.fonts[fontKey] = love.graphics.newFont(font, fontSize)
+        end
+    else
+        fontKey = "default_" .. fontSize
+        if not mane.fonts[fontKey] then
+            mane.fonts[fontKey] = love.graphics.newFont(fontSize)
+        end
+    end
+
+    local inputField = libInput(initialText, inputType)
+    inputField:setFont(mane.fonts[fontKey])
+    inputField:setDimensions(width, height)
+    inputField:setAlignment(align)
+    inputField:setEditable(options.editable ~= false)
+    if options.filter then
+        inputField:setFilter(options.filter)
+    end
+
+    local obj = setmetatable({
+        x = x or 0,
+        y = y or 0,
+        width = width or 200,
+        height = height or mane.fonts[fontKey]:getHeight(),
+        _type = "newTextField",
+        color = options.color or {1, 1, 1, 1},
+        color2 = options.color or {1, 1, 1, 1},
+        angle = 0,
+        xScale = 1,
+        yScale = 1,
+        isVisible = true,
+        group = self,
+        inputField = inputField,
+        font = mane.fonts[fontKey],
+        fontKey = fontKey,
+        fontPath = type(font) == "string" and font or nil,
+        fontSize = fontSize,
+        align = align,
+        setFontSize = function(self, newFontSize)
+            if self.fontPath then
+                local newFontKey = self.fontPath .. "_" .. newFontSize
+                if not mane.fonts[newFontKey] then
+                    mane.fonts[newFontKey] = love.graphics.newFont(self.fontPath, newFontSize)
+                end
+                self.fontKey = newFontKey
+                self.font = mane.fonts[newFontKey]
+            else
+                local newFontKey = "default_" .. newFontSize
+                if not mane.fonts[newFontKey] then
+                    mane.fonts[newFontKey] = love.graphics.newFont(newFontSize)
+                end
+                self.fontKey = newFontKey
+                self.font = mane.fonts[newFontKey]
+            end
+            self.fontSize = newFontSize
+            self.inputField:setFont(self.font)
+        end,
+        getText = function(self)
+            return self.inputField:getText()
+        end,
+        setText = function(self, text)
+            self.inputField:setText(text)
+        end,
+        getSelectedText = function(self)
+            return self.inputField:getSelectedText()
+        end,
+        setEditable = function(self, editable)
+            self.inputField:setEditable(editable)
+        end,
+        events = {
+            collision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {},
+            key = {},
+            update = {},
+        }
+    }, {__index = base})
+
+
+    obj.stroke = self:newRect(obj.x, obj.y, obj.width, obj.height)
+    obj.stroke.mode = "line"
+    obj:addEvent("update", function(e)
+        obj.inputField:update(e.dt)
+        obj.stroke.x, obj.stroke.y, obj.stroke.width, obj.stroke.height = obj.x, obj.y, obj.width, obj.height
+    end)
+
+
+    obj:addEvent("touch", function(e)
+        if e.phase == "began" then
+            if mane.core.inputFieldFocus and mane.core.inputFieldFocus ~= obj then
+                mane.core.inputFieldFocus.inputField:setEditable(false)
+                mane.core.inputFieldFocus.stroke.color = {1,1,1,1}
+                mane.core.inputFieldFocus.inputField:setEditable(true)
+            end
+            mane.core.inputFieldFocus = obj
+            obj.inputField:setEditable(true)
+            obj.stroke.color = {0,1,0,1}
+        end
+    end)
+
+    local origRemove = obj.remove
+    function obj:remove()
+        for i = #mane.core.inputField, 1, -1 do
+            if mane.core.inputField[i] == obj then
+                table.remove(mane.core.inputField, i)
+                break
+            end
+        end
+        if mane.core.inputFieldFocus == obj then
+            mane.core.inputFieldFocus = nil
+        end
+        obj.stroke:remove()
+        origRemove(obj)
+    end
+
+    table.insert(mane.core.inputField, obj)
+
+    table.insert(self.obj, obj)
+    return obj
+end
+
+function m:newBoxField(x, y, width, height, options)
+    local libInput = require("mane.lib.InputField")
+    options = options or {}
+    local inputType = options.nowrap and "multinowrap" or "multiwrap"
+    local initialText = options.text or ""
+    local font = options.font
+    local fontSize = options.fontSize or 20
+    local align = options.align or "left"
+
+    local fontKey
+    if type(font) == "string" then
+        fontKey = font .. "_" .. fontSize
+        if not mane.fonts[fontKey] then
+            mane.fonts[fontKey] = love.graphics.newFont(font, fontSize)
+        end
+    else
+        fontKey = "default_" .. fontSize
+        if not mane.fonts[fontKey] then
+            mane.fonts[fontKey] = love.graphics.newFont(fontSize)
+        end
+    end
+
+    local inputField = libInput(initialText, inputType)
+    inputField:setFont(mane.fonts[fontKey])
+    inputField:setDimensions(width, height)
+    inputField:setAlignment(align)
+    inputField:setEditable(options.editable ~= false)
+    if options.filter then
+        inputField:setFilter(options.filter)
+    end
+
+    local obj = setmetatable({
+        x = x or 0,
+        y = y or 0,
+        width = width or 200,
+        height = height or 100,
+        _type = "newBoxField",
+        color = options.color or {1, 1, 1, 1},
+        color2 = options.color or {1, 1, 1, 1},
+        angle = 0,
+        xScale = 1,
+        yScale = 1,
+        isVisible = true,
+        group = self,
+        inputField = inputField,
+        font = mane.fonts[fontKey],
+        fontKey = fontKey,
+        fontPath = type(font) == "string" and font or nil,
+        fontSize = fontSize,
+        align = align,
+        setFontSize = function(self, newFontSize)
+            if self.fontPath then
+                local newFontKey = self.fontPath .. "_" .. newFontSize
+                if not mane.fonts[newFontKey] then
+                    mane.fonts[newFontKey] = love.graphics.newFont(self.fontPath, newFontSize)
+                end
+                self.fontKey = newFontKey
+                self.font = mane.fonts[newFontKey]
+            else
+                local newFontKey = "default_" .. newFontSize
+                if not mane.fonts[newFontKey] then
+                    mane.fonts[newFontKey] = love.graphics.newFont(newFontSize)
+                end
+                self.fontKey = newFontKey
+                self.font = mane.fonts[newFontKey]
+            end
+            self.fontSize = newFontSize
+            self.inputField:setFont(self.font)
+        end,
+        getText = function(self)
+            return self.inputField:getText()
+        end,
+        setText = function(self, text)
+            self.inputField:setText(text)
+        end,
+        getSelectedText = function(self)
+            return self.inputField:getSelectedText()
+        end,
+        setEditable = function(self, editable)
+            self.inputField:setEditable(editable)
+        end,
+        events = {
+            collision = {},
+            preCollision = {},
+            postCollision = {},
+            touch = {},
+            key = {},
+            update = {},
+        }
+    }, {__index = base})
+
+    obj.stroke = self:newRect(obj.x, obj.y, obj.width, obj.height)
+    obj.stroke.mode = "line"
+    obj:addEvent("update", function(e)
+        obj.inputField:update(e.dt)
+        obj.stroke.x, obj.stroke.y, obj.stroke.width, obj.stroke.height = obj.x, obj.y, obj.width, obj.height
+    end)
+
+    obj:addEvent("touch", function(e)
+        if e.phase == "began" then
+            if mane.core.inputFieldFocus and mane.core.inputFieldFocus ~= obj then
+                mane.core.inputFieldFocus.inputField:setEditable(false)
+                mane.core.inputFieldFocus.stroke.color = {1,1,1,1}
+                mane.core.inputFieldFocus.inputField:setEditable(true)
+            end
+            mane.core.inputFieldFocus = obj
+            obj.inputField:setEditable(true)
+            obj.stroke.color = {0,1,0,1}
+        end
+    end)
+
+    local origRemove = obj.remove
+    function obj:remove()
+        for i = #mane.core.inputField, 1, -1 do
+            if mane.core.inputField[i] == obj then
+                table.remove(mane.core.inputField, i)
+                break
+            end
+        end
+        
+        if mane.core.inputFieldFocus == obj then
+            mane.core.inputFieldFocus = nil
+        end
+        obj.stroke:remove()
+        origRemove(obj)
+    end
+
+    table.insert(mane.core.inputField, obj)
+
+    table.insert(self.obj, obj)
+    return obj
+end
+
 function m:newSprite(spriteSheet, x, y)
     local obj = setmetatable({
         spriteSheet = spriteSheet,
@@ -206,8 +473,8 @@ function m:newPrintf(text, font, x, y, limit, align, fontSize)
             end
             self.fontSize = newFontSize
         end,
-        getWidth = function (self)
-            return self.font:getWidth(self.text)
+        getWidth = function (self, text)
+            return self.font:getWidth(text or self.text)
         end,
         mode = "fill",
         _type = "newPrintf",
@@ -274,8 +541,8 @@ function m:newPrint(text, font, x, y, fontSize)
             end
             self.fontSize = newFontSize
         end,
-        getWidth = function (self)
-            return self.font:getWidth(self.text)
+        getWidth = function (self, text)
+            return self.font:getWidth(text or self.text)
         end,
         mode = "fill",
         _type = "newPrint",

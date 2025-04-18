@@ -35,6 +35,21 @@ function mane.load()
         [4] = 0,
         time = 2
     })
+
+    local textField = group:newTextField(100, 50, 200, 30, {
+        text = "Single line",
+        fontSize = 16,
+        align = "center",
+        password = false
+    })
+
+    local boxField = mane.display.game:newBoxField(100, 200, 200, 100, {
+        text = "Multi-line text\nLine 2",
+        fontSize = 14,
+        align = "left",
+        nowrap = false,
+        editable = true
+    })
 end
 
 -- скролл

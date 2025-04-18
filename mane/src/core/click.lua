@@ -107,7 +107,7 @@ local clickCheck = {
         return true
         end
         return false
-    end
+    end,
 }
 
 function m.new(obj, listener)
@@ -150,7 +150,10 @@ local function pressed(_device, ...)
     elseif _device == 'android' then
         local params = {...}
         id, x, y, dx, dy, pressure = params[1], params[2], params[3], params[4], params[5], params[6]
+        button, isTouch = 1, true
     end
+
+    local hitTextField = false
 
     local function call_func(obj, x, y)
         if not obj.isTouch then
@@ -299,9 +302,43 @@ local function pressed(_device, ...)
                         break
                     end
                 end
+            elseif obj._type == "newBoxField" or obj._type == "newTextField" then
+                local x1 = obj.x - obj.width / 2
+                local y1 = obj.y - obj.height / 2
+                local x2 = obj.x + obj.width / 2
+                local y2 = obj.y + obj.height / 2
+                if clickX >= x1 and clickX <= x2 and clickY >= y1 and clickY <= y2 then
+                    hitTextField = true
+                    if mane.core.inputFieldFocus then
+                        mane.core.inputFieldFocus.stroke.color = {1,1,1,1}
+                    end
+                    mane.core.inputFieldFocus = obj
+                    mane.core.inputFieldFocus.stroke.color = {0,1,0,1}
+                    love.keyboard.setTextInput(true)
+                    local relX, relY = x - obj.x, y - obj.y
+                    local angle = math.rad(obj.angle or 0)
+                    local xScale, yScale = obj.xScale or 1, obj.yScale or 1
+                    local rotX = relX * math.cos(-angle) - relY * math.sin(-angle)
+                    local rotY = relX * math.sin(-angle) + relY * math.cos(-angle)
+                    local finalX = rotX / xScale + obj.width / 2
+                    local finalY = rotY / yScale + obj.height / 2
+                    obj.inputField:mousepressed(finalX, finalY, button or 1, _device == 'android' and 1)
+                    local result = call_func(obj, x, y)
+                    if result then
+                        break
+                    end
+                end
             end
         else
             obj.isTouch = false
+        end
+
+        if not hitTextField and mane.core.inputFieldFocus then
+            mane.core.inputFieldFocus.inputField:setEditable(false)
+            mane.core.inputFieldFocus.inputField:setEditable(true)
+            mane.core.inputFieldFocus.stroke.color = {1,1,1,1}
+            mane.core.inputFieldFocus = nil
+            love.keyboard.setTextInput(false)
         end
     end
 end

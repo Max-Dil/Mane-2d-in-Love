@@ -32,7 +32,10 @@ _G.mane = {
     fonts = {},
 	sounds = {},
     fps = 1000,
-	core = {},
+	core = {
+		inputField = {},
+		inputFieldFocus = nil,
+	},
 	json = require("mane.lib.json"),
 	transition = require("mane.src.core.transition"),
 	speed = 1
@@ -66,7 +69,11 @@ function love.resize(w, h)
 end
 
 function love.keypressed(key, scancode, isrepeat)
-	mane.core.key.keypressed(key, scancode, isrepeat)
+    mane.core.key.keypressed(key, scancode, isrepeat)
+    if mane.core.inputFieldFocus then
+        local obj = mane.core.inputFieldFocus
+        obj.inputField:keypressed(key, isrepeat)
+    end
 end
 
 function love.keyreleased(key)
@@ -74,15 +81,41 @@ function love.keyreleased(key)
 end
 
 function love.mousereleased(x, y, button, isTouch)
-	mane.core.click.mousereleased(x, y, button, isTouch)
+    mane.core.click.mousereleased(x, y, button, isTouch)
+    if mane.core.inputFieldFocus then
+        local obj = mane.core.inputFieldFocus
+        obj.inputField:mousereleased(x, y, button)
+    end
 end
 
-function love.mousepressed( x, y, button, isTouch)
-	mane.core.click.mousepressed(x, y, button, isTouch)
+function love.mousepressed(x, y, button, isTouch, pressCount)
+    mane.core.click.mousepressed(x, y, button, isTouch)
+    if mane.core.inputFieldFocus then
+        local obj = mane.core.inputFieldFocus
+        obj.inputField:mousepressed(x, y, button, pressCount)
+    end
+end
+
+function love.wheelmoved(dx, dy)
+    if mane.core.inputFieldFocus then
+        local obj = mane.core.inputFieldFocus
+        obj.inputField:wheelmoved(dx, dy)
+    end
+end
+
+function love.textinput(text)
+    if mane.core.inputFieldFocus then
+        local obj = mane.core.inputFieldFocus
+        obj.inputField:textinput(text)
+    end
 end
 
 function love.mousemoved(x, y, dx, dy)
-	mane.core.click.mousemoved(x, y, dx, dy)
+    mane.core.click.mousemoved(x, y, dx, dy)
+    if mane.core.inputFieldFocus then
+        local obj = mane.core.inputFieldFocus
+        obj.inputField:mousemoved(x, y)
+    end
 end
 
 function love.touchreleased(id, x, y, dx, dy, pressure)

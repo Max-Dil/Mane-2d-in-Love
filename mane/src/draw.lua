@@ -24,6 +24,36 @@ SOFTWARE.
 
 local m = {}
 
+m.newTextField = function(obj)
+    if not obj.isVisible then return end
+    local color = obj.color or {1, 1, 1, 1}
+    love.graphics.push()
+    love.graphics.translate(obj.x, obj.y)
+    love.graphics.rotate(math.rad(obj.angle))
+    love.graphics.scale(obj.xScale, obj.yScale)
+
+    love.graphics.setFont(obj.font)
+
+    love.graphics.setColor(0, 0, 1, 0.5)
+    for _, x, y, w, h in obj.inputField:eachSelection() do
+        love.graphics.rectangle("fill", x - obj.width / 2, y - obj.height / 2, w, h)
+    end
+
+    love.graphics.setColor(color[1], color[2], color[3], color[4])
+    for _, text, x, y in obj.inputField:eachVisibleLine() do
+        love.graphics.print(text, x, y, 0, 1, 1, obj.width/2, obj.height / 2)
+    end
+
+    if mane.core.inputFieldFocus == obj then
+        local x, y, h = obj.inputField:getCursorLayout()
+        love.graphics.setColor(1, 1, 1, math.abs(math.cos(obj.inputField:getBlinkPhase() * math.pi)))
+        love.graphics.rectangle("fill", x - obj.width / 2, y - obj.height / 2, 1, h)
+    end
+
+    love.graphics.pop()
+end
+m.newBoxField = m.newTextField
+
 m.newSprite = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
@@ -76,9 +106,14 @@ m.newPrintf = function (obj)
     if type(obj.text) == "table" then
         love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle), obj.xScale, obj.yScale)
     else
-        local textWidth = obj.font:getWidth(obj.text)
-        local textHeight = obj.font:getHeight(obj.text)
-        love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
+        if obj.align == "left" then
+            local textHeight = obj.font:getHeight(obj.text)
+            love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle), obj.xScale, obj.yScale, nil, textHeight/2)
+        else
+            local textWidth = obj.font:getWidth(obj.text)
+            local textHeight = obj.font:getHeight(obj.text)
+            love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
+        end
     end
 end
 
