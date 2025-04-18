@@ -24,7 +24,7 @@ SOFTWARE.
 
 local m = {}
 m.groupUpdate = function(group, dt)
-    for i = 1, #group.obj, 1 do
+    for i = #group.obj, 1, -1 do
         local obj = group.obj[i]
         if obj._type == 'newGroup' then
             m.groupUpdate(obj)

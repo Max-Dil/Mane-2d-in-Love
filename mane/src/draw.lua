@@ -88,7 +88,8 @@ m.newContainer = function (container)
         container.height
     )
     love.graphics.translate(container.x - container.width/2, container.y - container.height/2)
-    for i = 1, #container.obj, 1 do
+    local len = #container.obj
+    for i = 1, len, 1 do
         local obj = container.obj[i]
         if obj.isVisible then
             love.graphics.push()
@@ -282,7 +283,8 @@ m.newGroup = function(group)
     love.graphics.translate(group.x, group.y)
     love.graphics.scale(group.xScale, group.yScale)
 
-    for i = 1, #group.obj, 1 do
+    local len = #group.obj
+    for i = 1, len, 1 do
         local obj = group.obj[i]
         if obj.isVisible then
             love.graphics.push()
