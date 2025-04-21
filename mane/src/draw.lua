@@ -29,8 +29,8 @@ m.newTextField = function(obj)
     local color = obj.color or {1, 1, 1, 1}
     love.graphics.push()
     love.graphics.translate(obj.x, obj.y)
-    love.graphics.rotate(math.rad(obj.angle))
-    love.graphics.scale(obj.xScale, obj.yScale)
+    love.graphics.rotate(math.rad(obj.angle or 0))
+    love.graphics.scale(obj.xScale or 1, obj.yScale or 1)
 
     love.graphics.setFont(obj.font)
 
@@ -62,9 +62,9 @@ m.newSprite = function (obj)
         obj.spriteSheet.sprites[obj.frame],
         obj.x,
         obj.y,
-        math.rad(obj.angle),
-        obj.xScale,
-        obj.yScale,
+        math.rad(obj.angle or 0),
+        obj.xScale or 1,
+        obj.yScale or 1,
         obj.spriteSheet.frameWidth / 2,
         obj.spriteSheet.frameHeight / 2
     )
@@ -74,8 +74,8 @@ m.newParticle = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
     love.graphics.translate(obj.x, obj.y)
-    love.graphics.rotate(math.rad(obj.angle))
-    love.graphics.scale(obj.xScale, obj.yScale)
+    love.graphics.rotate(math.rad(obj.angle or 0))
+    love.graphics.scale(obj.xScale or 1, obj.yScale or 1)
     love.graphics.draw(obj.particle, 0, 0)
 end
 
@@ -105,15 +105,15 @@ m.newPrintf = function (obj)
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
     love.graphics.setFont(obj.font)
     if type(obj.text) == "table" then
-        love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle), obj.xScale, obj.yScale)
+        love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle or 0), obj.xScale or 1, obj.yScale or 1)
     else
         if obj.align == "left" then
             local textHeight = obj.font:getHeight(obj.text)
-            love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle), obj.xScale, obj.yScale, nil, textHeight/2)
+            love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle or 0), obj.xScale or 1, obj.yScale or 1, nil, textHeight/2)
         else
             local textWidth = obj.font:getWidth(obj.text)
             local textHeight = obj.font:getHeight(obj.text)
-            love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
+            love.graphics.printf(obj.text, obj.x, obj.y, obj.limit, obj.align, math.rad(obj.angle or 0), obj.xScale or 1, obj.yScale or 1, textWidth/2, textHeight/2)
         end
     end
 end
@@ -123,11 +123,11 @@ m.newPrint = function (obj)
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
     love.graphics.setFont(obj.font)
     if type(obj.text) == "table" then
-        love.graphics.print(obj.text, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale)
+        love.graphics.print(obj.text, obj.x, obj.y, math.rad(obj.angle or 0), obj.xScale or 1, obj.yScale or 1)
     else
         local textWidth = obj.font:getWidth(obj.text)
         local textHeight = obj.font:getHeight(obj.text)
-        love.graphics.print(obj.text, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale, textWidth/2, textHeight/2)
+        love.graphics.print(obj.text, obj.x, obj.y, math.rad(obj.angle or 0), obj.xScale or 1, obj.yScale or 1, textWidth/2, textHeight/2)
     end
 end
 
@@ -137,9 +137,9 @@ m.newPolygon = function (obj)
     local width, height = mane.graphics.getPolygonDimensions(obj.vertices)
     width, height = width*1.5, height*1.5
     love.graphics.translate(obj.x - width, obj.y - height)
-    love.graphics.rotate(math.rad(obj.angle))
-    love.graphics.scale(obj.xScale, obj.yScale)
-    love.graphics.polygon(obj.mode, obj.vertices)
+    love.graphics.rotate(math.rad(obj.angle or 0))
+    love.graphics.scale(obj.xScale or 1, obj.yScale or 1)
+    love.graphics.polygon(obj.mode or "fill", obj.vertices)
 end
 
 m.newPoints = function (obj)
@@ -148,9 +148,9 @@ m.newPoints = function (obj)
     local width, height = mane.graphics.getPointsDimensions(obj.points)
     width, height = width*1.5, height*1.5
     love.graphics.translate(obj.x - width, obj.y - height)
-    love.graphics.rotate(math.rad(obj.angle))
-    love.graphics.scale(obj.xScale, obj.yScale)
-    love.graphics.setPointSize(obj.size)
+    love.graphics.rotate(math.rad(obj.angle or 0))
+    love.graphics.scale(obj.xScale or 1, obj.yScale or 1)
+    love.graphics.setPointSize(obj.size or 5)
     love.graphics.points(obj.points)
 end
 
@@ -160,11 +160,11 @@ m.newLine = function (obj)
     local width, height = mane.graphics.getLineWidthHeight(obj.points)
     width, height = width*1.5, height*1.5
     love.graphics.translate(obj.x - width, obj.y - height)
-    love.graphics.rotate(math.rad(obj.angle))
-    love.graphics.scale(obj.xScale, obj.yScale)
-    love.graphics.setLineWidth( obj.width)
-    love.graphics.setLineStyle( obj.style )
-    love.graphics.setLineJoin( obj.join )
+    love.graphics.rotate(math.rad(obj.angle or 0))
+    love.graphics.scale(obj.xScale or 1, obj.yScale or 1)
+    love.graphics.setLineWidth( obj.width or 3)
+    love.graphics.setLineStyle( obj.style or "smooth")
+    love.graphics.setLineJoin( obj.join or "none")
     love.graphics.line(obj.points)
 end
 
@@ -172,9 +172,9 @@ m.newEllipse = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
     love.graphics.translate(obj.x, obj.y)
-    love.graphics.rotate(math.rad(obj.angle))
-    love.graphics.scale(obj.xScale, obj.yScale)
-    love.graphics.ellipse(obj.mode, 0, 0, obj.radiusx, obj.radiusy, obj.segments)
+    love.graphics.rotate(math.rad(obj.angle or 0))
+    love.graphics.scale(obj.xScale or 1, obj.yScale or 1)
+    love.graphics.ellipse(obj.mode or "fill", 0, 0, obj.radiusx, obj.radiusy, obj.segments)
 end
 
 m.newLayerImage = function (obj)
@@ -182,9 +182,9 @@ m.newLayerImage = function (obj)
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
     local image = obj.image[obj.layerindex]
     if obj.quad then
-        love.graphics.draw(image, obj.quad, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale, (obj.ox or image:getWidth())/2, (obj.oy or image:getHeight())/2)
+        love.graphics.draw(image, obj.quad, obj.x, obj.y, math.rad(obj.angle or 0), obj.xScale or 1, obj.yScale or 1, (obj.ox or image:getWidth())/2, (obj.oy or image:getHeight())/2)
     else
-        love.graphics.draw(image, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale, (obj.ox or image:getWidth())/2, (obj.oy or image:getHeight())/2)
+        love.graphics.draw(image, obj.x, obj.y, math.rad(obj.angle or 0), obj.xScale or 1, obj.yScale or 1, (obj.ox or image:getWidth())/2, (obj.oy or image:getHeight())/2)
     end
 end
 
@@ -192,9 +192,9 @@ m.newImage = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
     if obj.quad then
-        love.graphics.draw(obj.image, obj.quad, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale, (obj.ox or obj.image:getWidth())/2, (obj.oy or obj.image:getHeight())/2)
+        love.graphics.draw(obj.image, obj.quad, obj.x, obj.y, math.rad(obj.angle or 0), obj.xScale or 1, obj.yScale or 1, (obj.ox or obj.image:getWidth())/2, (obj.oy or obj.image:getHeight())/2)
     else
-        love.graphics.draw(obj.image, obj.x, obj.y, math.rad(obj.angle), obj.xScale, obj.yScale, (obj.ox or obj.image:getWidth())/2, (obj.oy or obj.image:getHeight())/2)
+        love.graphics.draw(obj.image, obj.x, obj.y, math.rad(obj.angle or 0), obj.xScale or 1, obj.yScale or 1, (obj.ox or obj.image:getWidth())/2, (obj.oy or obj.image:getHeight())/2)
     end
 end
 
@@ -202,27 +202,27 @@ m.newArc = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
     love.graphics.translate(obj.x, obj.y)
-    love.graphics.rotate(math.rad(obj.angle))
-    love.graphics.scale(obj.xScale, obj.yScale)
-    love.graphics.arc(obj.mode, obj.arctype, 0, 0, obj.radius, (obj.angle1 / 180) * math.pi, (obj.angle2 / 180) * math.pi, obj.segments)
+    love.graphics.rotate(math.rad(obj.angle or 0))
+    love.graphics.scale(obj.xScale or 1, obj.yScale or 1)
+    love.graphics.arc(obj.mode or "fill", obj.arctype or "pie", 0, 0, obj.radius, (obj.angle1 / 180) * math.pi, (obj.angle2 / 180) * math.pi, obj.segments)
 end
 
 m.newCircle = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
     love.graphics.translate(obj.x, obj.y)
-    love.graphics.rotate(math.rad(obj.angle))
-    love.graphics.scale(obj.xScale, obj.yScale)
-    love.graphics.circle(obj.mode, 0, 0, obj.radius, obj.segments)
+    love.graphics.rotate(math.rad(obj.angle or 0))
+    love.graphics.scale(obj.xScale or 1, obj.yScale or 1)
+    love.graphics.circle(obj.mode or "fill", 0, 0, obj.radius, obj.segments)
 end
 
 m.newRect = function (obj)
     local color = obj.color or {1,1,1,1}
     love.graphics.setColor(color[1] or 1, color[2] or 1, color[3] or 1, color[4] or 1)
     love.graphics.translate(obj.x, obj.y)
-    love.graphics.rotate(math.rad(obj.angle))
-    love.graphics.scale(obj.xScale, obj.yScale)
-    love.graphics.rectangle(obj.mode, - obj.width/2,  -obj.height/2, obj.width, obj.height, obj.rx, obj.ry, obj.segments)
+    love.graphics.rotate(math.rad(obj.angle or 0))
+    love.graphics.scale(obj.xScale or 1, obj.yScale or 1)
+    love.graphics.rectangle(obj.mode or "fill", -obj.width/2, -obj.height/2, obj.width, obj.height, obj.rx, obj.ry, obj.segments)
 end
 
 local offsetX, offsetY = 0, 0
@@ -279,9 +279,9 @@ end
 
 m.newGroup = function(group)
     love.graphics.push()
-    love.graphics.rotate(math.rad(group.angle))
+    love.graphics.rotate(math.rad(group.angle or 0))
     love.graphics.translate(group.x, group.y)
-    love.graphics.scale(group.xScale, group.yScale)
+    love.graphics.scale(group.xScale or 1, group.yScale or 1)
 
     local len = #group.obj
     for i = 1, len, 1 do
@@ -294,6 +294,20 @@ m.newGroup = function(group)
         end
     end
     love.graphics.pop()
+end
+
+mane.display.draw = function(obj)
+    if obj.isVisible then
+        love.graphics.push()
+        if obj.group then
+            love.graphics.rotate(math.rad(obj.group.angle or 0))
+            love.graphics.translate(obj.group.x, obj.group.y)
+            love.graphics.scale(obj.group.xScale or 1, obj.group.yScale or 1)
+        end
+        love.graphics.setShader(obj.shader or nil)
+        m[obj._type](obj)
+        love.graphics.pop()
+    end
 end
 
 return function ()

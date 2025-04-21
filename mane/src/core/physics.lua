@@ -26,7 +26,7 @@ local m = {}
 m.worlds = {}
 
 local worldClass = {}
-local physicsMethods = require('mane.src.core.methods.physics')
+local physicsMethods = require(mane.path .. '.src.core.methods.physics')
 
 function worldClass:addBody(obj, bodyType, options)
     for key, value in pairs(physicsMethods) do

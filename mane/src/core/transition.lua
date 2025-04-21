@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ]]
-local tween = require("mane.lib.tween")
+local tween = require(mane.path .. ".lib.tween")
 
 local m = {}
 m.transitions = {}
@@ -55,7 +55,7 @@ local function createTransition(object, params, isFrom)
         error("Params must be a table")
     end
 
-    local time = params.time or 1
+    local time = (params.time or 1000)/1000
     local delay = params.delay or 0
     local easing = params.transition or "linear"
     local onComplete = params.onComplete

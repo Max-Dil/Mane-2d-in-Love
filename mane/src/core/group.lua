@@ -1,7 +1,7 @@
 --[[
 MIT License
 
-Copyright (c) 2024 Max-Dil
+Copyright (c) 2025 Max-Dil
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,10 +23,10 @@ SOFTWARE.
 ]]
 
 local m = {}
-local base = require('mane.src.core.methods.base')
+local base = require(mane.path .. '.src.core.methods.base')
 
 function m:newTextField(x, y, width, height, options)
-    local libInput = require("mane.lib.InputField")
+    local libInput = require(mane.path .. ".lib.InputField")
     options = options or {}
     local inputType = options.password and "password" or "normal"
     local initialText = options.text or ""
@@ -153,6 +153,12 @@ function m:newTextField(x, y, width, height, options)
         origRemove(obj)
     end
 
+    local origMoveGroup = obj.moveToGroup
+    function obj:moveToGroup(group)
+        obj.stroke:moveToGroup(group)
+        origMoveGroup(obj, group)
+    end
+
     table.insert(mane.core.inputField, obj)
 
     table.insert(self.obj, obj)
@@ -160,7 +166,7 @@ function m:newTextField(x, y, width, height, options)
 end
 
 function m:newBoxField(x, y, width, height, options)
-    local libInput = require("mane.lib.InputField")
+    local libInput = require(mane.path .. ".lib.InputField")
     options = options or {}
     local inputType = options.nowrap and "multinowrap" or "multiwrap"
     local initialText = options.text or ""
@@ -284,6 +290,12 @@ function m:newBoxField(x, y, width, height, options)
         end
         obj.stroke:remove()
         origRemove(obj)
+    end
+
+    local origMoveGroup = obj.moveToGroup
+    function obj:moveToGroup(group)
+        obj.stroke:moveToGroup(group)
+        origMoveGroup(obj, group)
     end
 
     table.insert(mane.core.inputField, obj)
@@ -830,6 +842,8 @@ function m:newGroup()
         obj = {},
         x = 0,
         y = 0,
+        __x = 0,
+        __y = 0,
         _type = "newGroup",
         angle = 0,
         xScale = 1,
@@ -841,7 +855,6 @@ function m:newGroup()
         }
     }, {__index = m})
     function group.removeEvent(self, nameEvent, listener, ...)
-        local table = {...}
         if nameEvent == "key" then
             mane.core.key.remove(self, listener)
         elseif nameEvent == "update" then
@@ -849,7 +862,6 @@ function m:newGroup()
         end
     end
     function group.addEvent(self, nameEvent, listener, ...)
-        local table = {...}
         if nameEvent == "key" then
             mane.core.key.new(self, listener)
         elseif nameEvent == "update" then
@@ -886,10 +898,10 @@ function m:newGroup()
     end
     function group.removeObjects(self)
         for i = #self.obj, 1, -1 do
-            pcall(function ()
+            if self.obj[i] then
                 self.obj[i]:remove()
                 self.obj[i] = nil
-            end)
+            end
         end
         self.obj = {}
     end
@@ -944,6 +956,7 @@ mane.display.game =
 setmetatable(
     {
         group = {}, obj = {}, x = 0, y = 0, angle = 0, xScale = 1, yScale = 1, isVisible = true,
+        __x = 0, __y = 0,
         events = {
             key = {},
             update = {}
@@ -952,7 +965,6 @@ setmetatable(
     {__index = m}
 )
 function mane.display.game.removeEvent(self, nameEvent, listener, ...)
-    local table = {...}
     if nameEvent == "key" then
         mane.core.key.remove(self, listener)
     elseif nameEvent == "update" then
@@ -960,7 +972,6 @@ function mane.display.game.removeEvent(self, nameEvent, listener, ...)
     end
 end
 function mane.display.game.addEvent(self, nameEvent, listener, ...)
-    local table = {...}
     if nameEvent == "key" then
         mane.core.key.new(self, listener)
     elseif nameEvent == "update" then
@@ -969,10 +980,10 @@ function mane.display.game.addEvent(self, nameEvent, listener, ...)
 end
 function mane.display.game.removeObjects(self)
     for i = #self.obj, 1, -1 do
-        pcall(function ()
+        if self.obj[i] then
             self.obj[i]:remove()
             self.obj[i] = nil
-        end)
+        end
     end
     self.obj = {}
 end

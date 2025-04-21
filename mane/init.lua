@@ -25,8 +25,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ]]
 
+local currentPath = ...
 _G.mane = {
     load = function () end,
+	draw = function () end,
+	update = function (dt) end,
 	resize = function (w, h)end,
     images = {},
     fonts = {},
@@ -36,27 +39,31 @@ _G.mane = {
 		inputField = {},
 		inputFieldFocus = nil,
 	},
-	json = require("mane.lib.json"),
-	transition = require("mane.src.core.transition"),
-	speed = 1
+	json = require(currentPath .. ".lib.json"),
+	window = require(currentPath .. ".src.core.window"),
+	speed = 1,
+	path = currentPath,
 }
 
 local moduls = {"display","graphics","physics","key","update","click","timer","audio"}
 for _, name in ipairs(moduls) do
-	require("mane.src.core."..name)
+	require(currentPath .. ".src.core."..name)
 end
+mane.transition = require(currentPath .. ".src.core.transition")
 
 function love.load()
 
-local update = require("mane.src.update")
+local update = require(currentPath .. ".src.update")
 function love.update(dt)
     update(dt)
+	mane.update(dt)
 	mane.core.update.update(dt)
 end
 
-local draw = require("mane.src.draw")
+local draw = require(currentPath .. ".src.draw")
 function love.draw()
     draw()
+	mane.draw()
 end
 
 function love.resize(w, h)
@@ -71,8 +78,7 @@ end
 function love.keypressed(key, scancode, isrepeat)
     mane.core.key.keypressed(key, scancode, isrepeat)
     if mane.core.inputFieldFocus then
-        local obj = mane.core.inputFieldFocus
-        obj.inputField:keypressed(key, isrepeat)
+        mane.core.inputFieldFocus.inputField:keypressed(key, isrepeat)
     end
 end
 
@@ -83,38 +89,33 @@ end
 function love.mousereleased(x, y, button, isTouch)
     mane.core.click.mousereleased(x, y, button, isTouch)
     if mane.core.inputFieldFocus then
-        local obj = mane.core.inputFieldFocus
-        obj.inputField:mousereleased(x, y, button)
+        mane.core.inputFieldFocus.inputField:mousereleased(x, y, button)
     end
 end
 
 function love.mousepressed(x, y, button, isTouch, pressCount)
     mane.core.click.mousepressed(x, y, button, isTouch)
     if mane.core.inputFieldFocus then
-        local obj = mane.core.inputFieldFocus
-        obj.inputField:mousepressed(x, y, button, pressCount)
+        mane.core.inputFieldFocus.inputField:mousepressed(x, y, button, pressCount)
     end
 end
 
 function love.wheelmoved(dx, dy)
     if mane.core.inputFieldFocus then
-        local obj = mane.core.inputFieldFocus
-        obj.inputField:wheelmoved(dx, dy)
+        mane.core.inputFieldFocus.inputField:wheelmoved(dx, dy)
     end
 end
 
 function love.textinput(text)
     if mane.core.inputFieldFocus then
-        local obj = mane.core.inputFieldFocus
-        obj.inputField:textinput(text)
+        mane.core.inputFieldFocus.inputField:textinput(text)
     end
 end
 
 function love.mousemoved(x, y, dx, dy)
     mane.core.click.mousemoved(x, y, dx, dy)
     if mane.core.inputFieldFocus then
-        local obj = mane.core.inputFieldFocus
-        obj.inputField:mousemoved(x, y)
+        mane.core.inputFieldFocus.inputField:mousemoved(x, y)
     end
 end
 

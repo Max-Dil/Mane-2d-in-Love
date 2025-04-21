@@ -23,27 +23,28 @@ function mane.load()
     end)
 
     mane.display.renderMode = 'hybrid'
+
     world.update = true
 
     local c = group:newPrint('Text', 200, 200, 70)
     local textTransition = mane.transition.to(c, {
         x = 400,
-        time = 2,
+        time = 2000,
         transition = "outQuad",
     })
     local colorTransition = mane.transition.to(c.color, {
         [4] = 0,
-        time = 2
+        time = 2000
     })
 
-    local textField = group:newTextField(100, 50, 200, 30, {
+    local textField = group:newTextField(100, 50, 200, 20, {
         text = "Single line",
         fontSize = 16,
         align = "center",
         password = false
     })
 
-    local boxField = mane.display.game:newBoxField(100, 200, 200, 100, {
+    local boxField = group:newBoxField(100, 200, 200, 100, {
         text = "Multi-line text\nLine 2",
         fontSize = 14,
         align = "left",

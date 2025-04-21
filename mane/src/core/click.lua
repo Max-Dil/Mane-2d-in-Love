@@ -186,8 +186,8 @@ local function pressed(_device, ...)
             local clickX = x
             local clickY = y
             if obj.group then
-                clickX = x - (obj.group.x or 0)
-                clickY = y - (obj.group.y or 0)
+                clickX = x - obj.group.__x
+                clickY = y - obj.group.__y
             end
 
             if obj._type == "newRect" then

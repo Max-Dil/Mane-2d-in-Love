@@ -27,38 +27,40 @@ m.groupUpdate = function(group, dt)
     for i = #group.obj, 1, -1 do
         local obj = group.obj[i]
         if obj._type == 'newGroup' then
+            obj.__x = obj.x
+            obj.__y = obj.y
+            m.groupUpdate(obj)
+        elseif obj.body then
+            if obj.body:getType() == 'dynamic' then
+                local bodyX, bodyY, bodyAngle = obj.body:getX(), obj.body:getY(), obj.body:getAngle()
+                if obj.x ~= obj.oldBodyX then
+                    bodyX = bodyX + (obj.x - obj.oldBodyX)
+                    obj.body:setX(bodyX)
+                end
+                if obj.y ~= obj.oldBodyY then
+                    bodyY = bodyY + (obj.y - obj.oldBodyY)
+                    obj.body:setY(bodyY)
+                end
+                if obj.angle ~= obj.oldBodyAngle then
+                    bodyAngle = bodyAngle + math.rad(obj.angle - obj.oldBodyAngle)
+                    obj.body:setAngle(bodyAngle)
+                end
+                obj.x = bodyX - obj.bodyOptions.offsetX
+                obj.y = bodyY - obj.bodyOptions.offsetY
+                obj.angle = (bodyAngle / math.pi) * 180
+                obj.oldBodyX, obj.oldBodyY,  obj.oldBodyAngle = obj.x, obj.y, obj.angle
+            else
+                obj.body:setX(obj.x + obj.bodyOptions.offsetX + obj.group.__x)
+                obj.body:setY(obj.y + obj.bodyOptions.offsetY + obj.group.__y)
+                obj.body:setAngle(math.rad(obj.angle) + obj.group.angle)
+            end
+        elseif obj._type == 'newContainer' then
+            obj.__x = obj.x - obj.width/2
+            obj.__y = obj.y - obj.height/2
             m.groupUpdate(obj)
         elseif obj._type == 'newParticle' then
             if obj.update then
                 obj.particle:update(dt)
-            end
-        else
-            if obj.body then
-                if obj.body:getType() == 'dynamic' then
-                    if obj.x ~= obj.oldBodyX then
-                        obj.body:setX(obj.body:getX() + (obj.x - obj.oldBodyX))
-                    end
-
-                    if obj.y ~= obj.oldBodyY then
-                        obj.body:setY(obj.body:getY() + (obj.y - obj.oldBodyY))
-                    end
-
-                    if obj.angle ~= obj.oldBodyAngle then
-                        obj.body:setAngle(obj.body:getAngle() + math.rad(obj.angle - obj.oldBodyAngle))
-                    end
-
-                    obj.x = obj.body:getX() - obj.bodyOptions.offsetX
-                    obj.y = obj.body:getY() - obj.bodyOptions.offsetY
-                    obj.angle = (obj.body:getAngle() / math.pi) * 180
-
-                    obj.oldBodyX = obj.x
-                    obj.oldBodyY = obj.y
-                    obj.oldBodyAngle = obj.angle
-                else
-                    obj.body:setX(obj.x + obj.bodyOptions.offsetX + obj.group.x)
-                    obj.body:setY(obj.y + obj.bodyOptions.offsetY + obj.group.y)
-                    obj.body:setAngle(math.rad(obj.angle) + obj.group.angle)
-                end
             end
         end
     end
