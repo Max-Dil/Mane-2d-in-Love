@@ -1180,44 +1180,41 @@ end
 -- field:setDimensions( nil, nil ) -- Disable scrolling on both axes.
 -- Enable/disable horizontal/vertical scrolling.
 function InputField.setDimensions(field, w, h)
-	w = math.max((w or 1/0), 0)
-	h = math.max((h or 1/0), 0)
-	if field.width == w and field.height == h then  return  end
+    w = math.max((w or math.huge), 0)
+    h = math.max((h or math.huge), 0)
+    if field.width == w and field.height == h then return end
 
-	field.width           = w
-	field.height          = h
-	field.lastWrappedText = "\0" -- Make sure wrappedText updates.
+    field.width           = w
+    field.height          = h
+    field.lastWrappedText = "\0"
 
-	limitScroll(field)
+    limitScroll(field)
 end
 
 -- field:setWidth( width )
 -- field:setWidth( nil ) -- Disable scrolling on the x axis.
 -- Enable/disable horizontal scrolling.
 function InputField.setWidth(field, w)
-	w = math.max((w or 1/0), 0)
-	if field.width == w then  return  end
+    w = math.max((w or math.huge), 0)
+    if field.width == w then return end
 
-	field.width           = w
-	field.lastWrappedText = "\0" -- Make sure wrappedText updates.
+    field.width           = w
+    field.lastWrappedText = "\0"
 
-	limitScroll(field)
+    limitScroll(field)
 end
 
 -- field:setHeight( height )
 -- field:setHeight( nil ) -- Disable scrolling on the y axis.
 -- Enable/disable vertical scrolling.
 function InputField.setHeight(field, h)
-	h = math.max((h or 1/0), 0)
-	if field.height == h then  return  end
+    h = math.max((h or math.huge), 0)
+    if field.height == h then return end
 
-	field.height = h -- Note: wrappedText does not need to update because of this change.
+    field.height = h
 
-	limitScroll(field)
+    limitScroll(field)
 end
-
-
-
 
 -- width, height = field:getTextDimensions( )
 function InputField.getTextDimensions(field)

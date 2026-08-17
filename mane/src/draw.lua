@@ -236,7 +236,8 @@ m.newHitboxs = function (group)
                 m.newHitboxs(obj)
                 love.graphics.pop()
             end
-            if obj.body and obj.shape then
+
+            if obj.body and obj.fixture then
                 local bx, by = obj.body:getPosition()
                 local bAngle = obj.body:getAngle()
 
@@ -256,25 +257,21 @@ m.newHitboxs = function (group)
                         love.graphics.setColor(0.5,0.5,0.5,1)
                     end
                 end
-                if obj.bodyOptions.shape == "rect" then
-                    love.graphics.rectangle("line", 0 - obj.bodyOptions.width/2, 0 - obj.bodyOptions.height/2, obj.bodyOptions.width, obj.bodyOptions.height)
-                elseif obj.bodyOptions.shape == "circle" then
-                    love.graphics.circle('line', 0, 0, obj.bodyOptions.radius)
-                elseif obj.bodyOptions.shape == "chain" then
-                    local points = obj.bodyOptions.points
-                    love.graphics.line(points)
-                elseif obj.bodyOptions.shape == "edge" then
-                    local x1, y1 = obj.bodyOptions.x1, obj.bodyOptions.y1
-                    local x2, y2 = obj.bodyOptions.x2, obj.bodyOptions.y2
-                    love.graphics.line(x1, y1, x2, y2)
-                elseif obj.bodyOptions.shape == "polygon" then
-                    local points = obj.bodyOptions.vertices
-                    love.graphics.polygon("line", points)
+
+                local shapeType = obj.fixture:getType()
+                if shapeType == "polygon" then
+                    love.graphics.polygon("line", obj.fixture:getPoints())
+                elseif shapeType == "circle" then
+                    local cx, cy = obj.fixture:getPoint()
+                    love.graphics.circle('line', cx, cy, obj.fixture:getRadius())
+                elseif shapeType == "chain" or shapeType == "edge" then
+                    love.graphics.line(obj.fixture:getPoints())
                 end
                 love.graphics.pop()
             end
         end
     end
+    offsetX, offsetY = offsetX - group.x, offsetY - group.y
 end
 
 m.newGroup = function(group)
